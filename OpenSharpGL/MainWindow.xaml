@@ -1,0 +1,58 @@
+﻿<Window x:Class="OpenSharpGL.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:local="clr-namespace:OpenSharpGL"
+        xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
+        mc:Ignorable="d"
+        Title="OpenGL" Height="450" Width="800" Background="#FF3E3E3E" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowState="Maximized" Cursor="Arrow">
+
+
+    <Grid x:Name="grid_Main">
+        <Menu Height="24" Name="MenuBar" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Margin="0,0,-6,0" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#FF3E3E3E" >
+            <MenuItem Header="File" Foreground="Black" HorizontalAlignment="Center" Height="20">
+                <MenuItem Header="_New" />
+                <MenuItem Header="_Open" Click="OpenFile_Click"/>
+                <MenuItem Header="_Save" />
+                <MenuItem Header="_Save As" Click="SaveAs_Click"/>
+                <Separator />
+                <MenuItem Header="_Settings" />
+                <Separator />
+                <MenuItem Header="_Quit" Click="Quit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Create" Foreground="Black" HorizontalAlignment="Center" Height="20">
+                <MenuItem Header="_Primitives">
+                    <MenuItem Header="_Plane" Click="Plane_Click"/>
+                    <MenuItem Header="_Cube" Click="Cube_Click"/>
+                    <MenuItem Header="_Sphere"/>
+                    <MenuItem Header="_Cylinder"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <Separator HorizontalAlignment="Left" Height="15" Margin="0,17,0,0" VerticalAlignment="Top" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Background="#FF1B1B1B"/>
+
+        <sharpGL:OpenGLControl Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" DrawFPS="True" Resized="OpenGLControl_Resized" FrameRate="60.0" Margin="150,24,150,0" Foreground="Black" />
+
+        <Frame Name="SettingsFrame" Margin="0,59,0,0" HorizontalAlignment="Right" Width="150" NavigationUIVisibility="Hidden" >
+
+        </Frame>
+
+
+
+
+
+        <StackPanel x:Name="ButtonHolder" HorizontalAlignment="Right" Height="35" VerticalAlignment="Top" Width="145" Orientation="Horizontal" Margin="0,24,0,0">
+            <Button x:Name="SceneButton" Content="S" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="SceneButton_Click"/>
+            <Button x:Name="TransformButton" Content="T" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TransformButton_Click"/>
+            <Button x:Name="ColourButton" Content="C" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ColourButton_Click"/>
+        </StackPanel>
+        
+
+
+    </Grid>
+
+</Window>
+    
+    
