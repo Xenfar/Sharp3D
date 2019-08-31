@@ -12,7 +12,7 @@ namespace OpenSharpGL
     {
         //public float[] b = new float[2];
         //public Colour a = new Colour(1, 0, .5f);
-        void Start()
+        public void Start()
         {
             
         }
@@ -34,7 +34,7 @@ namespace OpenSharpGL
             
         }
 
-        public float[] Xyzs { get; }
+        
     }
     class Plane : Shapes
     {
@@ -60,25 +60,27 @@ namespace OpenSharpGL
 
         
         public Vertex[] verticies = new Vertex[8];
-        public Square(OpenGL gl, /*Vertex[] VertexManipulationArray*/ Color color)
+        public Square(OpenGL gl, /*Vertex[] VertexManipulationArray*/ Color color, float size)
         {
-
+            
             
             InitiateVerticies(out Vertex[] outed);
 
             QFace[] cube = new QFace[6];
             //use first one for primitive plane
             gl.Color(color.rgb);
-            cube[0] = new QFace(gl, verticies[0], verticies[1], verticies[2], verticies[3]);//top 
-            cube[1] = new QFace(gl, verticies[4], verticies[5], verticies[6], verticies[7]);//bottom
-            cube[2] = new QFace(gl, verticies[3], verticies[2], verticies[5], verticies[4]);
-            cube[3] = new QFace(gl, verticies[7], verticies[6], verticies[1], verticies[0]);
-            cube[4] = new QFace(gl, verticies[2], verticies[1], verticies[6], verticies[5]);
-            cube[5] = new QFace(gl, verticies[0], verticies[3], verticies[4], verticies[7]);
+            cube[0] = new QFace(gl, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);//top 
+            cube[1] = new QFace(gl, verticies[4] * size, verticies[5] * size, verticies[6] * size, verticies[7] * size);//bottom
+            cube[2] = new QFace(gl, verticies[3] * size, verticies[2] * size, verticies[5] * size, verticies[4] * size);
+            cube[3] = new QFace(gl, verticies[7 ] * size, verticies[6] * size, verticies[1] * size, verticies[0] * size);
+            cube[4] = new QFace(gl, verticies[2] * size, verticies[1] * size, verticies[6] * size, verticies[5] * size);
+            cube[5] = new QFace(gl, verticies[0] * size, verticies[3] * size, verticies[4] * size, verticies[7] * size);
             for (int i = 0; i < cube.Length; i++)
             {
+                
                 cube[i].Int();
             }
+
             //VerticieManipulation(VertexManipulationArray);
 
 
@@ -100,7 +102,7 @@ namespace OpenSharpGL
         public void VerticieManipulation(Vertex[] a)
         {
 
-                //v[3].X += 2.0f;
+                
                 verticies[0] = a[0];
                 verticies[1] = a[1];
                 verticies[2] = a[2];
@@ -114,5 +116,32 @@ namespace OpenSharpGL
         }
 
 
+    }
+    class Cylinder : Shapes
+    {
+        float offset;
+        public QFace[] faces;
+        public Cylinder(OpenGL gl, Color color, float Radius, float Height, int subDivisions)
+        {
+            gl.Color(color.rgb);
+            //faces = new QFace[subDivisions];
+            Vertex[] vertsTop = new Vertex[subDivisions];
+            for (int i = 0; i < vertsTop.Length; i++)
+            {
+                vertsTop[i].Y = Height;
+                vertsTop[i].X = Radius + offset;
+                vertsTop[i].Z = Radius + offset;
+                gl.Vertex(vertsTop[i]);
+                offset += 5;
+            }
+
+        }
+    }
+    class Circle
+    {
+        public Circle(OpenGL gl, float radius, int sectors, int stacks)
+        {
+            
+        }
     }
 }

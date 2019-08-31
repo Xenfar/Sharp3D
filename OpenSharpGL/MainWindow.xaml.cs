@@ -19,7 +19,8 @@ using SharpGL.Serialization;
 using SharpGL.SceneGraph.Core;
 using SharpGL.Enumerations;
 using Polygon = SharpGL.SceneGraph.Primitives.Polygon;
-
+using SharpGL.SceneGraph.Lighting;
+using SharpGL.SceneGraph.Effects;
 namespace OpenSharpGL
 {
     /// <summary>
@@ -30,9 +31,9 @@ namespace OpenSharpGL
         #region OpenGLVariables
         float rotate = 1;
         float rquad = 0;
-        
 
-        
+
+        Scene a = new Scene();
         double XScale,
             YScale,
             ZScale;
@@ -57,19 +58,13 @@ namespace OpenSharpGL
         public OpenGL gl;
         public MainWindow()
         {
+            a.OpenGL = gl;
             InitializeComponent();
             SettingsFrame.Content = sp;
-            /*
-            verticies[0] = new Vertex(1.0f, 1.0f, -1.0f);
-            verticies[1] = new Vertex(-1.0f, 1.0f, -1.0f);
-            verticies[2] = new Vertex(-1.0f, 1.0f, 1.0f);
-            verticies[3] = new Vertex(1.0f, 1.0f, 1.0f);
-            verticies[4] = new Vertex(1.0f, -1.0f, 1.0f);
-            verticies[5] = new Vertex(-1.0f, -1.0f, 1.0f);
-            verticies[6] = new Vertex(-1.0f, -1.0f, -1.0f);
-            verticies[7] = new Vertex(1.0f, -1.0f, -1.0f);
-            */
 
+
+
+            
         }
         #region PanelControls
         private void ColourButton_Click(object sender, RoutedEventArgs e)
@@ -122,7 +117,7 @@ namespace OpenSharpGL
             // Get the OpenGL instance.
             gl = args.OpenGL;
 
-            
+
             // Load and clear the projection matrix.
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
@@ -137,6 +132,7 @@ namespace OpenSharpGL
         }
         private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
+
             // Apply values
             RotationSpeed = ts.RotationSpeed;
             XScale = ts.XScale;
@@ -156,7 +152,8 @@ namespace OpenSharpGL
             
             //  Clear the color and depth buffers.
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
-
+            //Set window background color
+            gl.ClearColor(0.05f, 0.05f, 0.05f, 1f);
             //  Reset the modelview matrix.
             gl.LoadIdentity();
 
@@ -178,33 +175,45 @@ namespace OpenSharpGL
 
             
             
-            //  Start drawing triangles.
-            if (ScenePanel.WireframeOn == true)
-            {
-                gl.Begin(OpenGL.GL_LINE_STRIP);
-                //GL_POINTS
-            }
-            else
-            {
-                gl.Begin(OpenGL.GL_QUADS);
-                // GL_QUADS _STRIP
-            }
+            //  Start drawing
+
+            
 
             if (primToRender == "Cube")
             {
-                Shapes cube = new Square(gl, MaterialPanel.SelectedColour);
+                gl.Begin(OpenGL.GL_QUADS);
+                Shapes cube = new Square(gl, MaterialPanel.SelectedColour, 1);
+                gl.End();
+
+                if (ScenePanel.WireframeOn == true)
+                {
+                    Color c = new Color(0.1, 0.1, 0.1);
+                    gl.LineWidth(2);
+                    gl.Begin(OpenGL.GL_LINES);
+
+                    Shapes cube2 = new Square(gl, c, 1.005f);
+                    gl.End();
+
+                    Color a = new Color(0.6, 0.8, 0.5);
+                    gl.PointSize(5);
+                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
+                    gl.Begin(OpenGL.GL_POINTS);
+
+
+                    Shapes cube3 = new Square(gl, a, 1.009f);
+                    gl.End();
+                }
             }
             if (primToRender == "Plane")
             {
+                gl.Begin(OpenGL.GL_QUADS);
                 Shapes plane = new Plane(gl, MaterialPanel.SelectedColour);
+                gl.End();
             }
-            
-            //Shapes plane = new Plane(gl, MaterialPanel.SelectedColour);
-           // Shapes cube = new Square(gl, verticies, MaterialPanel.SelectedColour);
-           // Shapes square = new Square(gl, verticies, MaterialPanel.SelectedColour);
-            
-            gl.End();
 
+
+            
 
             //  Reset the modelview.
             gl.LoadIdentity();
@@ -217,8 +226,8 @@ namespace OpenSharpGL
 
             //  Rotate the geometry a bit.
             rotate += RotationSpeed;
-            rquad -= 3.0f;
-        
+            
+
 
         
     }
@@ -226,7 +235,7 @@ namespace OpenSharpGL
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
         args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
-            //args.OpenGL.Enable(OpenGL.GL_LESS);
+
         }
 
 
