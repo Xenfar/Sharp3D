@@ -44,10 +44,12 @@ namespace OpenSharpGL
             InitiateVerticies(out Vertex[] verticies);
             gli.Color(color.rgb);
             QFace plane = new QFace(gli, verticies[0], verticies[1], verticies[2], verticies[3]);
+            gli.LoadName(1);
             plane.Int();
         }
         void InitiateVerticies(out Vertex[] a)
         {
+            
             verticies[0] = new Vertex(1.0f, -0.3f, -1.0f);
             verticies[1] = new Vertex(-1.0f, -0.3f, -1.0f);
             verticies[2] = new Vertex(-1.0f, -0.3f, 1.0f);
@@ -69,11 +71,17 @@ namespace OpenSharpGL
             QFace[] cube = new QFace[6];
             //use first one for primitive plane
             gl.Color(color.rgb);
+            gl.LoadName(1);
             cube[0] = new QFace(gl, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);//top 
+            gl.LoadName(2);
             cube[1] = new QFace(gl, verticies[4] * size, verticies[5] * size, verticies[6] * size, verticies[7] * size);//bottom
+            gl.LoadName(3);
             cube[2] = new QFace(gl, verticies[3] * size, verticies[2] * size, verticies[5] * size, verticies[4] * size);
+            gl.LoadName(4);
             cube[3] = new QFace(gl, verticies[7 ] * size, verticies[6] * size, verticies[1] * size, verticies[0] * size);
+            gl.LoadName(5);
             cube[4] = new QFace(gl, verticies[2] * size, verticies[1] * size, verticies[6] * size, verticies[5] * size);
+            gl.LoadName(6);
             cube[5] = new QFace(gl, verticies[0] * size, verticies[3] * size, verticies[4] * size, verticies[7] * size);
             for (int i = 0; i < cube.Length; i++)
             {

@@ -54,7 +54,7 @@ namespace OpenSharpGL
         TransformationSettings ts = new TransformationSettings();
         MaterialPanel mp = new MaterialPanel();
         ScenePanel sp = new ScenePanel();
-        
+        uint[] buffer = new uint[100];
         public OpenGL gl;
         public MainWindow()
         {
@@ -64,7 +64,10 @@ namespace OpenSharpGL
 
 
 
+           
             
+            
+
         }
         #region PanelControls
         private void ColourButton_Click(object sender, RoutedEventArgs e)
@@ -93,6 +96,11 @@ namespace OpenSharpGL
         private void Plane_Click(object sender, RoutedEventArgs e)
         {
             primToRender = "Plane";
+        }
+        
+        private void GLControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.MessageBox.Show("fucking noob");
         }
 
         private void TransformButton_Click(object sender, RoutedEventArgs e)
@@ -157,7 +165,6 @@ namespace OpenSharpGL
             //  Reset the modelview matrix.
             gl.LoadIdentity();
 
-
             //Move, Scale and Rotate Object
             gl.Translate(XTrans, YTrans, ZTrans - 9);
             
@@ -173,16 +180,17 @@ namespace OpenSharpGL
                 
             }
 
-            
-            
+            //Teapot tp = new Teapot();
+            //tp.Draw(gl, 20, 1, OpenGL.GL_FILL);
+
             //  Start drawing
 
-            
+            DrawScene();
 
             if (primToRender == "Cube")
             {
                 gl.Begin(OpenGL.GL_QUADS);
-                Shapes cube = new Square(gl, MaterialPanel.SelectedColour, 1);
+                //Shapes cube = new Square(gl, MaterialPanel.SelectedColour, 1);
                 gl.End();
 
                 if (ScenePanel.WireframeOn == true)
@@ -191,7 +199,8 @@ namespace OpenSharpGL
                     gl.LineWidth(2);
                     gl.Begin(OpenGL.GL_LINES);
 
-                    Shapes cube2 = new Square(gl, c, 1.005f);
+                    //Shapes cube2 = new Square(gl, c, 1.005f);
+
                     gl.End();
 
                     Color a = new Color(0.6, 0.8, 0.5);
@@ -200,8 +209,10 @@ namespace OpenSharpGL
                     gl.Enable(OpenGL.GL_POINT_SMOOTH);
                     gl.Begin(OpenGL.GL_POINTS);
 
+                    
 
-                    Shapes cube3 = new Square(gl, a, 1.009f);
+
+                    // Shapes cube3 = new Square(gl, a, 1.009f);
                     gl.End();
                 }
             }
@@ -213,7 +224,8 @@ namespace OpenSharpGL
             }
 
 
-            
+
+
 
             //  Reset the modelview.
             gl.LoadIdentity();
@@ -231,10 +243,71 @@ namespace OpenSharpGL
 
         
     }
+        void DrawScene()
+        {
+            //Axies
+            //X
+            //gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
+            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            gl.Begin(OpenGL.GL_LINES);
+            gl.LineWidth(5);
+            
+            gl.Color(1, 0.1, 0.1);
+            gl.Vertex(0, 0, 0);
+            gl.Vertex(1, 0, 0);
+            gl.End();
+            //Y
+            gl.Begin(OpenGL.GL_LINES);
+            gl.LineWidth(5);
 
+            gl.Color(0.1, 1, 0.1);
+            gl.Vertex(0, 0, 0);
+            gl.Vertex(0, 1, 0);
+            gl.End();
+            //Z
+            gl.Begin(OpenGL.GL_LINES);
+            gl.LineWidth(5);
+            
+            gl.Color(0.1, 0.1, 1);
+            gl.Vertex(0, 0, 0);
+            gl.Vertex(0, 0, 1);
+            gl.End();
+
+            //Grid
+            gl.Begin(OpenGL.GL_LINES);
+            gl.LineWidth(5);
+            gl.Color(0.5, 0.5, 0.5);
+            gl.Vertex(2, 0, 2);
+            gl.Vertex(-2, 0, 2);
+            //continue
+            gl.End();
+
+
+        }
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
+            OpenGL gla = args.OpenGL;
         args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
+            /*
+            float[] global_ambient = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
+            float[] light0pos = new float[] { 0.0f, 5.0f, 10.0f, 1.0f };
+            float[] light0ambient = new float[] { 0.2f, 0.2f, 0.2f, 1.0f };
+            float[] light0diffuse = new float[] { 0.3f, 0.3f, 0.3f, 1.0f };
+            float[] light0specular = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
+
+            float[] lmodel_ambient = new float[] { 0.2f, 0.2f, 0.2f, 1.0f };
+            gla.LightModel(OpenGL.GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+
+            gla.LightModel(OpenGL.GL_LIGHT_MODEL_AMBIENT, global_ambient);
+            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, light0pos);
+             gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, light0ambient);
+            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, light0diffuse);
+            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPECULAR, light0specular);
+
+            gla.Enable(OpenGL.GL_LIGHTING);
+            gla.Enable(OpenGL.GL_LIGHT0);
+            gla.ShadeModel(OpenGL.GL_FLAT);
+            */
 
         }
 
