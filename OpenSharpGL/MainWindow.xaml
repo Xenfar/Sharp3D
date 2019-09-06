@@ -26,8 +26,9 @@
                 <MenuItem Header="_Primitives">
                     <MenuItem Header="_Plane" Click="Plane_Click"/>
                     <MenuItem Header="_Cube" Click="Cube_Click"/>
+                    <MenuItem Header="_Cylinder" Click="Cylinder_Click"/>
                     <MenuItem Header="_Sphere"/>
-                    <MenuItem Header="_Cylinder"/>
+                    
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -48,7 +49,8 @@
             <Button x:Name="TransformButton" Content="T" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TransformButton_Click"/>
             <Button x:Name="ColourButton" Content="C" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ColourButton_Click"/>
         </StackPanel>
-        
+        <TextBlock x:Name="debug" HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="316" Width="140"/>
+
 
 
     </Grid>

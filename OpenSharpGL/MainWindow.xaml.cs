@@ -21,6 +21,8 @@ using SharpGL.Enumerations;
 using Polygon = SharpGL.SceneGraph.Primitives.Polygon;
 using SharpGL.SceneGraph.Lighting;
 using SharpGL.SceneGraph.Effects;
+using System.Windows.Input;
+
 namespace OpenSharpGL
 {
     /// <summary>
@@ -30,6 +32,7 @@ namespace OpenSharpGL
     {
         #region OpenGLVariables
         float rotate = 1;
+        float rotaten = -1;
         float rquad = 0;
 
 
@@ -56,6 +59,8 @@ namespace OpenSharpGL
         ScenePanel sp = new ScenePanel();
         uint[] buffer = new uint[100];
         public OpenGL gl;
+        public static float gridSize = 2;
+        public static string debugtext;
         public MainWindow()
         {
             a.OpenGL = gl;
@@ -97,7 +102,11 @@ namespace OpenSharpGL
         {
             primToRender = "Plane";
         }
-        
+        private void Cylinder_Click(object sender, RoutedEventArgs e)
+        {
+            primToRender = "Cylinder";
+        }
+
         private void GLControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             System.Windows.MessageBox.Show("fucking noob");
@@ -107,6 +116,9 @@ namespace OpenSharpGL
         {
             SettingsFrame.Content = ts;
         }
+
+
+
         private void SceneButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsFrame.Content = sp;
@@ -142,7 +154,7 @@ namespace OpenSharpGL
         {
 
             // Apply values
-            RotationSpeed = ts.RotationSpeed;
+            //RotationSpeed = 1;//ts.RotationSpeed;
             XScale = ts.XScale;
             YScale = ts.YScale;
             ZScale = ts.ZScale;
@@ -151,9 +163,9 @@ namespace OpenSharpGL
             YTrans = ts.YTrans;
             ZTrans = ts.ZTrans;
 
-            XRot = ts.XRot;
-            YRot = ts.YRot;
-            ZRot = ts.ZRot;
+            //XRot = ts.XRot;
+            //YRot = ts.YRot;
+            //ZRot = ts.ZRot;
             
             //  Get the OpenGL instance that's been passed to us.
             gl = args.OpenGL;
@@ -169,28 +181,55 @@ namespace OpenSharpGL
             gl.Translate(XTrans, YTrans, ZTrans - 9);
             
             gl.Scale(XScale, YScale, ZScale);
-            
-            if (XRot == 0.0 & ZRot == 0.0 & YRot == 0.0)
+            /*
+            if (Keyboard.IsKeyDown(Key.Right) & Keyboard.IsKeyDown(Key.Left) == false)
+            {
+                YRot = 1;
+                
+                RotationSpeed = 1;
+            }
+            if (Keyboard.IsKeyDown(Key.Left) & Keyboard.IsKeyDown(Key.Right) == false)
+            {
+                YRot = -1;
+                RotationSpeed = 1;
+                rotate = -rotate;
+            }
+
+            if (Keyboard.IsKeyDown(Key.Right) == false & Keyboard.IsKeyDown(Key.Left) == false)
+            {
+                RotationSpeed = 0;
+                
+            }
+            */
+
+
+                
+            if (XRot == 0 & YRot == 0 & ZRot == 0)
             {
                 
             }
-            else{
-                
+            else
+            {
+                debug.Text = rotate.ToString() + " " + YRot.ToString() + " " + ZRot.ToString();
                 gl.Rotate(rotate, XRot, YRot, ZRot);
                 
             }
+                
+                
+            
 
+            //gl.Rotate(rotate, XRot, YRot, ZRot);
             //Teapot tp = new Teapot();
             //tp.Draw(gl, 20, 1, OpenGL.GL_FILL);
 
             //  Start drawing
-
+            //debug.Text = debugtext;
             DrawScene();
 
             if (primToRender == "Cube")
             {
                 gl.Begin(OpenGL.GL_QUADS);
-                //Shapes cube = new Square(gl, MaterialPanel.SelectedColour, 1);
+                Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 1);
                 gl.End();
 
                 if (ScenePanel.WireframeOn == true)
@@ -199,7 +238,7 @@ namespace OpenSharpGL
                     gl.LineWidth(2);
                     gl.Begin(OpenGL.GL_LINES);
 
-                    //Shapes cube2 = new Square(gl, c, 1.005f);
+                    Shapes cube2 = new Cube(gl, c, 1.005f);
 
                     gl.End();
 
@@ -208,11 +247,7 @@ namespace OpenSharpGL
                     gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
                     gl.Enable(OpenGL.GL_POINT_SMOOTH);
                     gl.Begin(OpenGL.GL_POINTS);
-
-                    
-
-
-                    // Shapes cube3 = new Square(gl, a, 1.009f);
+                    Shapes cube3 = new Cube(gl, a, 1.009f);
                     gl.End();
                 }
             }
@@ -221,6 +256,49 @@ namespace OpenSharpGL
                 gl.Begin(OpenGL.GL_QUADS);
                 Shapes plane = new Plane(gl, MaterialPanel.SelectedColour);
                 gl.End();
+                if (ScenePanel.WireframeOn == true)
+                {
+                    Color c = new Color(0.1, 0.1, 0.1);
+                    gl.LineWidth(2);
+                    gl.Begin(OpenGL.GL_LINES);
+
+                    Shapes cube2 = new Plane(gl, c);
+
+                    gl.End();
+
+                    Color a = new Color(0.6, 0.8, 0.5);
+                    gl.PointSize(5);
+                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
+                    gl.Begin(OpenGL.GL_POINTS);
+                    Shapes cube3 = new Plane(gl, a);
+                    gl.End();
+                }
+            }
+            if (primToRender == "Cylinder")
+            {
+                
+                gl.Begin(OpenGL.GL_QUADS);
+                Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 1);
+                gl.End();
+                if (ScenePanel.WireframeOn == true)
+                {
+                    Color c = new Color(0.1, 0.1, 0.1);
+                    gl.LineWidth(2);
+                    gl.Begin(OpenGL.GL_LINES);
+
+                    Shapes cube2 = new Cylinder(gl, c, 1f);
+
+                    gl.End();
+
+                    Color a = new Color(0.6, 0.8, 0.5);
+                    gl.PointSize(5);
+                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
+                    gl.Begin(OpenGL.GL_POINTS);
+                    Shapes cube3 = new Cylinder(gl, a, 1f);
+                    gl.End();
+                }
             }
 
 
@@ -237,7 +315,7 @@ namespace OpenSharpGL
             gl.Flush();
 
             //  Rotate the geometry a bit.
-            rotate += RotationSpeed;
+            //rotate += RotationSpeed;
             
 
 
@@ -246,39 +324,43 @@ namespace OpenSharpGL
         void DrawScene()
         {
             //Axies
-            //X
-            //gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
-            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            
+            gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
+            gl.Enable(OpenGL.GL_LINE_SMOOTH);
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
             
             gl.Color(1, 0.1, 0.1);
             gl.Vertex(0, 0, 0);
             gl.Vertex(1, 0, 0);
-            gl.End();
-            //Y
-            gl.Begin(OpenGL.GL_LINES);
-            gl.LineWidth(5);
 
-            gl.Color(0.1, 1, 0.1);
-            gl.Vertex(0, 0, 0);
-            gl.Vertex(0, 1, 0);
-            gl.End();
-            //Z
-            gl.Begin(OpenGL.GL_LINES);
-            gl.LineWidth(5);
             
             gl.Color(0.1, 0.1, 1);
             gl.Vertex(0, 0, 0);
+            gl.Vertex(0, 1, 0);
+
+            gl.Color(0.1, 1, 0.1);
+            
+            gl.Vertex(0, 0, 0);
             gl.Vertex(0, 0, 1);
             gl.End();
+            
 
             //Grid
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
             gl.Color(0.5, 0.5, 0.5);
-            gl.Vertex(2, 0, 2);
-            gl.Vertex(-2, 0, 2);
+            gl.Vertex(gridSize, 0, gridSize);
+            gl.Vertex(-gridSize, 0, gridSize);
+
+            gl.Vertex(-gridSize, 0, gridSize);
+            gl.Vertex(-gridSize, 0, -gridSize);
+
+            gl.Vertex(-gridSize, 0, -gridSize);
+            gl.Vertex(gridSize, 0, -gridSize);
+
+            gl.Vertex(gridSize, 0, -gridSize);
+            gl.Vertex(gridSize, 0, gridSize);
             //continue
             gl.End();
 
@@ -286,7 +368,7 @@ namespace OpenSharpGL
         }
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-            OpenGL gla = args.OpenGL;
+            //OpenGL gla = args.OpenGL;
         args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
             /*
             float[] global_ambient = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };

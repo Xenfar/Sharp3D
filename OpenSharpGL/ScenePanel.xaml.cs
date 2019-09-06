@@ -38,5 +38,19 @@ namespace OpenSharpGL
                 WireframeButton.Content = "Off";
             }
         }
+
+        private void GridSizeInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+                float number = 0;
+                if (gridSizeInput.Text != "")
+                    if (!float.TryParse(gridSizeInput.Text, out number)) gridSizeInput.Text = 2.5.ToString();
+                if (number > 100) gridSizeInput.Text = 100.ToString();
+                if (number < 1) gridSizeInput.Text = 1.ToString();
+                gridSizeInput.SelectionStart = gridSizeInput.Text.Length;
+                MainWindow.gridSize = number;
+
+            
+        }
     }
 }
