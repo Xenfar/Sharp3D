@@ -22,6 +22,7 @@ using Polygon = SharpGL.SceneGraph.Primitives.Polygon;
 using SharpGL.SceneGraph.Lighting;
 using SharpGL.SceneGraph.Effects;
 using System.Windows.Input;
+using Point = System.Windows.Point;
 
 namespace OpenSharpGL
 {
@@ -61,16 +62,19 @@ namespace OpenSharpGL
         public OpenGL gl;
         public static float gridSize = 2;
         public static string debugtext;
+        public Point xy;
+        double tempScale;
+        double scaleMin = 1;
         public MainWindow()
         {
             a.OpenGL = gl;
             InitializeComponent();
             SettingsFrame.Content = sp;
 
+            tempScale = 2;
 
 
            
-            
             
 
         }
@@ -128,9 +132,21 @@ namespace OpenSharpGL
 
         
 
-        void Startup()
-        {
 
+        private void GlControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            
+            //tempZTrans = ZTrans - 9;
+            
+            if (e.Delta <= 0 & tempScale > scaleMin)
+            {
+                tempScale -= 0.3;
+            }
+            if (e.Delta >= 0 )
+            {
+                tempScale += 0.3;
+            }
+            debug.Text = tempScale.ToString();
         }
         private void OpenGLControl_Resized(object sender, OpenGLEventArgs args)
         {
@@ -143,29 +159,17 @@ namespace OpenSharpGL
             gl.LoadIdentity();
 
             // Perform a perspective transformation
-            gl.Perspective(45.0f, (float)gl.RenderContextProvider.Width /
+            gl.Perspective(60.0f, (float)gl.RenderContextProvider.Width /
                 (float)gl.RenderContextProvider.Height,
                 0.1f, 100.0f);
 
             // Load the modelview.
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
+            //gl.Translate(0, 0, - 9);
         }
+        
         private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-
-            // Apply values
-            //RotationSpeed = 1;//ts.RotationSpeed;
-            XScale = ts.XScale;
-            YScale = ts.YScale;
-            ZScale = ts.ZScale;
-
-            XTrans = ts.XTrans;
-            YTrans = ts.YTrans;
-            ZTrans = ts.ZTrans;
-
-            //XRot = ts.XRot;
-            //YRot = ts.YRot;
-            //ZRot = ts.ZRot;
             
             //  Get the OpenGL instance that's been passed to us.
             gl = args.OpenGL;
@@ -178,29 +182,66 @@ namespace OpenSharpGL
             gl.LoadIdentity();
 
             //Move, Scale and Rotate Object
-            gl.Translate(XTrans, YTrans, ZTrans - 9);
+            #region sceneTransformations
+
+            xy = Mouse.GetPosition(GLControl);
+
+            // Apply values
+            RotationSpeed = 1;
+            XScale += ts.XScale;
+            YScale += ts.YScale;
+            ZScale += ts.ZScale;
+
+            XTrans += ts.XTrans;
+            YTrans += ts.YTrans;
+            ZTrans += ts.ZTrans;
+
+            XRot += ts.XRot;
+            YRot += ts.YRot;
+            ZRot += ts.ZRot;
+            if (Keyboard.IsKeyDown(Key.LeftShift) && Mouse.MiddleButton == MouseButtonState.Pressed)
+            {
+                YTrans += -((xy.Y - 425) / 2000);
+                YTrans = Math.Round(YTrans, 5);
+                XTrans += ((xy.X - 810) / 2000);
+                XTrans = Math.Round(XTrans, 5);
+                    gl.Translate(XTrans, YTrans, ZTrans - 9);
+                    debug.Text = XTrans.ToString();
+
+                
+
+
+            }
+            else
+            {
+                gl.Translate(XTrans, YTrans , ZTrans - 9);
+            }
             
-            gl.Scale(XScale, YScale, ZScale);
-            /*
+
+            gl.Scale(tempScale, tempScale, tempScale);
+            
             if (Keyboard.IsKeyDown(Key.Right) & Keyboard.IsKeyDown(Key.Left) == false)
             {
                 YRot = 1;
+                rotate += 1;
                 
                 RotationSpeed = 1;
             }
             if (Keyboard.IsKeyDown(Key.Left) & Keyboard.IsKeyDown(Key.Right) == false)
             {
-                YRot = -1;
+                YRot = 1;
+                rotate += -1;
                 RotationSpeed = 1;
-                rotate = -rotate;
+                
             }
 
             if (Keyboard.IsKeyDown(Key.Right) == false & Keyboard.IsKeyDown(Key.Left) == false)
             {
+                
                 RotationSpeed = 0;
                 
             }
-            */
+            
 
 
                 
@@ -214,158 +255,51 @@ namespace OpenSharpGL
                 gl.Rotate(rotate, XRot, YRot, ZRot);
                 
             }
-                
-                
+            #endregion
+
+            #region rendering
+            Shapes axies = new Axies(gl, 1);
+            Shapes grid = new Grid(gl, gridSize);
+
             
-
-            //gl.Rotate(rotate, XRot, YRot, ZRot);
-            //Teapot tp = new Teapot();
-            //tp.Draw(gl, 20, 1, OpenGL.GL_FILL);
-
-            //  Start drawing
-            //debug.Text = debugtext;
-            DrawScene();
-
             if (primToRender == "Cube")
             {
-                gl.Begin(OpenGL.GL_QUADS);
-                Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 1);
-                gl.End();
-
+                Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
+             
+                cube.Draw();
+                
                 if (ScenePanel.WireframeOn == true)
-                {
-                    Color c = new Color(0.1, 0.1, 0.1);
-                    gl.LineWidth(2);
-                    gl.Begin(OpenGL.GL_LINES);
-
-                    Shapes cube2 = new Cube(gl, c, 1.005f);
-
-                    gl.End();
-
-                    Color a = new Color(0.6, 0.8, 0.5);
-                    gl.PointSize(5);
-                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
-                    gl.Begin(OpenGL.GL_POINTS);
-                    Shapes cube3 = new Cube(gl, a, 1.009f);
-                    gl.End();
+                { 
+                    cube.DrawWire();
                 }
             }
             if (primToRender == "Plane")
             {
-                gl.Begin(OpenGL.GL_QUADS);
-                Shapes plane = new Plane(gl, MaterialPanel.SelectedColour);
-                gl.End();
+                Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
+                plane.Draw();
                 if (ScenePanel.WireframeOn == true)
                 {
-                    Color c = new Color(0.1, 0.1, 0.1);
-                    gl.LineWidth(2);
-                    gl.Begin(OpenGL.GL_LINES);
-
-                    Shapes cube2 = new Plane(gl, c);
-
-                    gl.End();
-
-                    Color a = new Color(0.6, 0.8, 0.5);
-                    gl.PointSize(5);
-                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
-                    gl.Begin(OpenGL.GL_POINTS);
-                    Shapes cube3 = new Plane(gl, a);
-                    gl.End();
+                    plane.DrawWire();
                 }
             }
             if (primToRender == "Cylinder")
             {
-                
-                gl.Begin(OpenGL.GL_QUADS);
                 Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 1);
-                gl.End();
+                cylinder.Draw();
+                
                 if (ScenePanel.WireframeOn == true)
                 {
-                    Color c = new Color(0.1, 0.1, 0.1);
-                    gl.LineWidth(2);
-                    gl.Begin(OpenGL.GL_LINES);
-
-                    Shapes cube2 = new Cylinder(gl, c, 1f);
-
-                    gl.End();
-
-                    Color a = new Color(0.6, 0.8, 0.5);
-                    gl.PointSize(5);
-                    gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-                    gl.Enable(OpenGL.GL_POINT_SMOOTH);
-                    gl.Begin(OpenGL.GL_POINTS);
-                    Shapes cube3 = new Cylinder(gl, a, 1f);
-                    gl.End();
+                    cylinder.DrawWire();
                 }
             }
-
-
-
-
-
+            #endregion
             //  Reset the modelview.
             gl.LoadIdentity();
-
-
-
-
             //  Flush OpenGL.
             gl.Flush();
-
-            //  Rotate the geometry a bit.
-            //rotate += RotationSpeed;
-            
-
-
         
     }
-        void DrawScene()
-        {
-            //Axies
-            
-            gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
-            gl.Enable(OpenGL.GL_LINE_SMOOTH);
-            gl.Begin(OpenGL.GL_LINES);
-            gl.LineWidth(5);
-            
-            gl.Color(1, 0.1, 0.1);
-            gl.Vertex(0, 0, 0);
-            gl.Vertex(1, 0, 0);
 
-            
-            gl.Color(0.1, 0.1, 1);
-            gl.Vertex(0, 0, 0);
-            gl.Vertex(0, 1, 0);
-
-            gl.Color(0.1, 1, 0.1);
-            
-            gl.Vertex(0, 0, 0);
-            gl.Vertex(0, 0, 1);
-            gl.End();
-            
-
-            //Grid
-            gl.Begin(OpenGL.GL_LINES);
-            gl.LineWidth(5);
-            gl.Color(0.5, 0.5, 0.5);
-            gl.Vertex(gridSize, 0, gridSize);
-            gl.Vertex(-gridSize, 0, gridSize);
-
-            gl.Vertex(-gridSize, 0, gridSize);
-            gl.Vertex(-gridSize, 0, -gridSize);
-
-            gl.Vertex(-gridSize, 0, -gridSize);
-            gl.Vertex(gridSize, 0, -gridSize);
-
-            gl.Vertex(gridSize, 0, -gridSize);
-            gl.Vertex(gridSize, 0, gridSize);
-            //continue
-            gl.End();
-
-
-        }
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             //OpenGL gla = args.OpenGL;
