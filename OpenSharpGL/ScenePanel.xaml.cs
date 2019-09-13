@@ -20,6 +20,7 @@ namespace OpenSharpGL
     public partial class ScenePanel : Page
     {
         public static bool WireframeOn = false;
+        public static bool XRayOn = false;
         public ScenePanel()
         {
             InitializeComponent();
@@ -37,8 +38,21 @@ namespace OpenSharpGL
                 WireframeOn = false;
                 WireframeButton.Content = "Off";
             }
-        }
 
+        }
+        private void XRayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (XRayOn == false)
+            {
+                XRayOn = true;
+                XRayButton.Content = "On";
+            }
+            else
+            {
+                XRayOn = false;
+                XRayButton.Content = "Off";
+            }
+        }
         private void GridSizeInput_TextChanged(object sender, TextChangedEventArgs e)
         {
 

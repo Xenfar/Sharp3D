@@ -27,14 +27,14 @@
                     <MenuItem Header="_Plane" Click="Plane_Click"/>
                     <MenuItem Header="_Cube" Click="Cube_Click"/>
                     <MenuItem Header="_Cylinder" Click="Cylinder_Click"/>
-                    <MenuItem Header="_Sphere"/>
-                    
+                    <MenuItem Header="_Sphere" Click="Sphere_Click"/>
+
                 </MenuItem>
             </MenuItem>
         </Menu>
         <Separator HorizontalAlignment="Left" Height="15" Margin="0,17,0,0" VerticalAlignment="Top" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Background="#FF1B1B1B"/>
 
-        <sharpGL:OpenGLControl MouseWheel="GlControl_MouseWheel" MouseLeftButtonUp="GLControl_MouseLeftButtonUp" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized" DrawFPS="True" Resized="OpenGLControl_Resized" FrameRate="60.0" Margin="150,24,150,0" Foreground="Black" />
+        <sharpGL:OpenGLControl DrawFPS="True" MouseWheel="GlControl_MouseWheel" MouseLeftButtonUp="GLControl_MouseLeftButtonUp" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized"  Resized="OpenGLControl_Resized" FrameRate="60.0" Margin="150,24,150,0" Foreground="Black" />
 
         <Frame Name="SettingsFrame" Margin="0,59,0,0" HorizontalAlignment="Right" Width="150" NavigationUIVisibility="Hidden" >
 
@@ -49,7 +49,7 @@
             <Button x:Name="TransformButton" Content="T" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="TransformButton_Click"/>
             <Button x:Name="ColourButton" Content="C" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ColourButton_Click"/>
         </StackPanel>
-        <TextBlock x:Name="debug" HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="316" Width="140"/>
+        <TextBlock x:Name="debug" HorizontalAlignment="Left" Margin="5,29,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="25" Width="140"/>
 
 
 

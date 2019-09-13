@@ -237,39 +237,48 @@ namespace OpenSharpGL
         {
             //Axies
 
-            gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
-            gl.Enable(OpenGL.GL_LINE_SMOOTH);
+            //gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
+            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
+            float[] points = new float[]
+            {
+                0 * scale, 0.5f * scale, 1 * scale, 1.5f * scale
+            };
 
             gl.Color(1, 0.1, 0.1);
-            gl.Vertex(0 * scale, 0 * scale, 0 * scale);
-            gl.Vertex(1 * scale, 0 * scale, 0 * scale);
-
+            gl.Vertex(points[0], points[1], points[0]);
+            gl.Vertex(points[2], points[1], points[0]);
+            
 
             gl.Color(0.1, 0.1, 1);
-            gl.Vertex(0 * scale, 0 * scale, 0 * scale);
-            gl.Vertex(0 * scale, 1 * scale, 0 * scale);
+            gl.Vertex(points[0], points[1], points[0]);
+            gl.Vertex(points[0], points[3], points[0]);
 
             gl.Color(0.1, 1, 0.1);
 
-            gl.Vertex(0 * scale, 0 * scale, 0 * scale);
-            gl.Vertex(0 * scale, 0 * scale, 1 * scale);
+            gl.Vertex(points[0], points[1], points[0]);
+            gl.Vertex(points[0], points[1], points[2]);
             gl.End();
 
         }
     }
     class Grid : Shapes
     {
+
         public Grid(OpenGL gl, float scale)
         {
+            float scale2;
+
             //Grid
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
-            gl.Color(0.5, 0.5, 0.5);
+            gl.Color(0.15, 0.15, 0.15);
+            //fl
             gl.Vertex(scale, 0, scale);
+            //fr
             gl.Vertex(-scale, 0, scale);
-
+            
             gl.Vertex(-scale, 0, scale);
             gl.Vertex(-scale, 0, -scale);
 
@@ -278,6 +287,27 @@ namespace OpenSharpGL
 
             gl.Vertex(scale, 0, -scale);
             gl.Vertex(scale, 0, scale);
+            //gl.Color(0.3, 0.3, 0.3);
+            for (float i = 0; i < scale; i += (scale / 10))
+            {
+                scale2 = scale / i;
+                
+                gl.Vertex(scale / scale2, 0, -scale );
+                gl.Vertex(scale / scale2, 0, scale );
+
+                gl.Vertex(scale / -scale2, 0, -scale);
+                gl.Vertex(scale / -scale2, 0, scale);
+
+
+                gl.Vertex(-scale, 0, scale / scale2);
+                gl.Vertex(scale, 0, scale / scale2);
+
+                gl.Vertex(-scale, 0, scale / -scale2);
+                gl.Vertex(scale, 0, scale / -scale2);
+
+
+
+            }
             //continue
             gl.End();
         }
@@ -321,88 +351,11 @@ namespace OpenSharpGL
         {
             gl.Begin(OpenGL.GL_QUADS);
             gl.Color(color.rgb);
-            gl.Vertex(verticies[0]);
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[3]);
-            gl.Vertex(verticies[1]);
 
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[5]);
-            gl.Vertex(verticies[3]);
-
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[6]);
-            gl.Vertex(verticies[7]);
-            gl.Vertex(verticies[5]);
-
-            gl.Vertex(0.92388, height, 0.382683);
-            gl.Vertex(1, height, 0);
-            gl.Vertex(1, -height, 0);
-            gl.Vertex(0.92388, -height, 0.382683);
-            //q2
-            gl.Vertex(1, height, 0);
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.92388, -height, -0.382683);
-            gl.Vertex(1, -height, 0);
-
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.707107, -height, -0.707107);
-            gl.Vertex(0.92388, -height, -0.382683);
-
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0.382683, -height, -0.92388);
-            gl.Vertex(0.707107, -height, -0.707107);
-
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0, height, -1);
-            gl.Vertex(0, -height, -1);
-            gl.Vertex(0.382683, -height, -0.92388);
-            //q3
-
-            gl.Vertex(0, height, -1);
-            gl.Vertex(-0.382683, height, -0.92388);
-            gl.Vertex(-0.382683, -height, -0.92388);
-            gl.Vertex(0, -height, -1);
-
-            gl.Vertex(-0.382638, height, -0.92388);
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.707107, -height, -0.707107);
-            gl.Vertex(-0.382638, -height, -0.92388);
-
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            gl.Vertex(-0.707107, -height, -0.707107);
-
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-1, -height, 0);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            //q4
-
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.92388, -height, 0.382683);
-            gl.Vertex(-1, -height, 0);
-
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.707107, -height, 0.707107);
-            gl.Vertex(-0.92388, -height, 0.382683);
-
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(-0.382683, -height, 0.92388);
-            gl.Vertex(-0.707107, -height, 0.707107);
-
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(0, height, 1);
-            gl.Vertex(0, -height, 1);
-            gl.Vertex(-0.382683, -height, 0.92388);
+            cylV();
+            
             gl.End();
+            
 
         }
         public override void DrawWire()
@@ -411,87 +364,7 @@ namespace OpenSharpGL
             
             gl.Begin(OpenGL.GL_LINES);
             gl.Color(wire.rgb);
-            gl.Vertex(verticies[0]);
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[3]);
-            gl.Vertex(verticies[1]);
-
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[5]);
-            gl.Vertex(verticies[3]);
-
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[6]);
-            gl.Vertex(verticies[7]);
-            gl.Vertex(verticies[5]);
-
-            gl.Vertex(0.92388, height, 0.382683);
-            gl.Vertex(1, height, 0);
-            gl.Vertex(1, -height, 0);
-            gl.Vertex(0.92388, -height, 0.382683);
-            //q2
-            gl.Vertex(1, height, 0);
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.92388, -height, -0.382683);
-            gl.Vertex(1, -height, 0);
-
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.707107, -height, -0.707107);
-            gl.Vertex(0.92388, -height, -0.382683);
-
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0.382683, -height, -0.92388);
-            gl.Vertex(0.707107, -height, -0.707107);
-
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0, height, -1);
-            gl.Vertex(0, -height, -1);
-            gl.Vertex(0.382683, -height, -0.92388);
-            //q3
-
-            gl.Vertex(0, height, -1);
-            gl.Vertex(-0.382683, height, -0.92388);
-            gl.Vertex(-0.382683, -height, -0.92388);
-            gl.Vertex(0, -height, -1);
-
-            gl.Vertex(-0.382638, height, -0.92388);
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.707107, -height, -0.707107);
-            gl.Vertex(-0.382638, -height, -0.92388);
-
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            gl.Vertex(-0.707107, -height, -0.707107);
-
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-1, -height, 0);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            //q4
-
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.92388, -height, 0.382683);
-            gl.Vertex(-1, -height, 0);
-
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.707107, -height, 0.707107);
-            gl.Vertex(-0.92388, -height, 0.382683);
-
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(-0.382683, -height, 0.92388);
-            gl.Vertex(-0.707107, -height, 0.707107);
-
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(0, height, 1);
-            gl.Vertex(0, -height, 1);
-            gl.Vertex(-0.382683, -height, 0.92388);
+            cylV();
             gl.End();
 
             gl.PointSize(5);
@@ -499,6 +372,11 @@ namespace OpenSharpGL
             gl.Enable(OpenGL.GL_POINT_SMOOTH);
             gl.Begin(OpenGL.GL_POINTS);
             gl.Color(points.rgb);
+            cylV();
+            gl.End();
+        }
+        private void cylV()
+        {
             gl.Vertex(verticies[0]);
             gl.Vertex(verticies[2]);
             gl.Vertex(verticies[3]);
@@ -580,14 +458,13 @@ namespace OpenSharpGL
             gl.Vertex(0, height, 1);
             gl.Vertex(0, -height, 1);
             gl.Vertex(-0.382683, -height, 0.92388);
-            gl.End();
         }
     }
     class Circle : Shapes
     {
-        public Circle(OpenGL gl, int slices, float count)
+        public Circle(OpenGL gl, float radius, float count)
         {
-            
+            /*
             for (int i = 0; i < count; i++)
             {
                 int ia, na, ib, nb;
@@ -616,7 +493,23 @@ namespace OpenSharpGL
                         
                     }
                 }
+                }
+                */
+            int time = 5;
+            for (int i = 0; i < count; i++)
+            {
+                var rho = time + i;
+                var phi = 2 * Math.PI * i / count;
+                var x = (float)(radius * Math.Sin(phi) * Math.Cos(rho));
+                var z = (float)(radius * Math.Sin(phi) * Math.Sin(rho));
+                var y = (float)(radius * Math.Cos(phi));
+                gl.Color(1.0, 1.0, 1.0);
+                gl.Vertex(x, y, z);
             }
+
+
+                 
+            
         }
     }
 }

@@ -11,8 +11,10 @@
 
     <Grid>
         <Label Content="Wireframe" HorizontalAlignment="Center" Margin="5,34,5,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="90"/>
-        <Button x:Name="WireframeButton" Content="Off" HorizontalAlignment="Left" Margin="34,63,0,0" VerticalAlignment="Top" Width="30" Click="WireframeButton_Click"/>
-        <Label Content="Grid Size" HorizontalAlignment="Center" Margin="10,88,10,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="80"/>
-        <TextBox x:Name="gridSizeInput" TextChanged="GridSizeInput_TextChanged" HorizontalAlignment="Center" Height="23" Margin="24,122,25,0" TextWrapping="Wrap" Text="1.0" VerticalAlignment="Top" Width="51" Background="#FF6A6A6A" BorderBrush="#FF3C3C3C"/>
+        <Button x:Name="WireframeButton" Content="Off" HorizontalAlignment="Left" Margin="34,63,0,0" VerticalAlignment="Top" Width="30" Click="WireframeButton_Click" Background="#FF6A6A6A"/>
+        <Label Content="    XRay" HorizontalAlignment="Center" Margin="5,88,5,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="90"/>
+        <Button x:Name="XRayButton" Content="Off" HorizontalAlignment="Left" Margin="34,122,0,0" VerticalAlignment="Top" Width="30" Click="XRayButton_Click" Background="#FF6A6A6A"/>
+        <Label Content="Grid Size" HorizontalAlignment="Center" Margin="10,150,10,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="80"/>
+        <TextBox x:Name="gridSizeInput" TextChanged="GridSizeInput_TextChanged" HorizontalAlignment="Center" Height="23" Margin="24,184,25,0" TextWrapping="Wrap" Text="1.0" VerticalAlignment="Top" Width="51" Background="#FF6A6A6A" BorderBrush="#FF3C3C3C"/>
     </Grid>
 </Page>

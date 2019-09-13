@@ -32,9 +32,10 @@ namespace OpenSharpGL
     public partial class MainWindow : Window
     {
         #region OpenGLVariables
-        float rotate = 1;
-        float rotaten = -1;
-        float rquad = 0;
+        float rotatex = 0;
+        float rotatey = 0;
+        float rotatez = 0;
+        
 
 
         Scene a = new Scene();
@@ -64,7 +65,8 @@ namespace OpenSharpGL
         public static string debugtext;
         public Point xy;
         double tempScale;
-        double scaleMin = 1;
+        double scaleMin = 0.1;
+        double scaleMax = 25;
         public MainWindow()
         {
             a.OpenGL = gl;
@@ -111,6 +113,11 @@ namespace OpenSharpGL
             primToRender = "Cylinder";
         }
 
+        private void Sphere_Click(object sender, RoutedEventArgs e)
+        {
+            primToRender = "Sphere";
+        }
+
         private void GLControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             System.Windows.MessageBox.Show("fucking noob");
@@ -130,21 +137,24 @@ namespace OpenSharpGL
         #endregion
 
 
-        
 
+        float scaleOffset;
 
         private void GlControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             
             //tempZTrans = ZTrans - 9;
             
-            if (e.Delta <= 0 & tempScale > scaleMin)
+            if (e.Delta < 0 & tempScale > scaleMin)
             {
-                tempScale -= 0.3;
+                scaleOffset += 0.01f;
+                tempScale -= 0.3 + scaleOffset;
             }
-            if (e.Delta >= 0 )
+            if (e.Delta > 0 & tempScale < scaleMax)
             {
-                tempScale += 0.3;
+                scaleOffset -= 0.01f;
+                tempScale += 0.3 - scaleOffset;
+                //debug.Text = tempScale.ToString();
             }
             debug.Text = tempScale.ToString();
         }
@@ -167,17 +177,21 @@ namespace OpenSharpGL
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             //gl.Translate(0, 0, - 9);
         }
-        
+        double xTransOffset;
+        double yTransOffset;
+
         private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             
             //  Get the OpenGL instance that's been passed to us.
             gl = args.OpenGL;
-            
+            //gl.Enable(OpenGL.GL_CULL_FACE); // cull face
+            //gl.CullFace(OpenGL.GL_BACK); // cull back face
+            //gl.FrontFace(OpenGL.GL_CW); // GL_CCW for counter clock-wise
             //  Clear the color and depth buffers.
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             //Set window background color
-            gl.ClearColor(0.05f, 0.05f, 0.05f, 1f);
+            gl.ClearColor(0.1f, 0.1f, 0.1f, 1f);
             //  Reset the modelview matrix.
             gl.LoadIdentity();
 
@@ -186,24 +200,11 @@ namespace OpenSharpGL
 
             xy = Mouse.GetPosition(GLControl);
 
-            // Apply values
-            RotationSpeed = 1;
-            XScale += ts.XScale;
-            YScale += ts.YScale;
-            ZScale += ts.ZScale;
-
-            XTrans += ts.XTrans;
-            YTrans += ts.YTrans;
-            ZTrans += ts.ZTrans;
-
-            XRot += ts.XRot;
-            YRot += ts.YRot;
-            ZRot += ts.ZRot;
             if (Keyboard.IsKeyDown(Key.LeftShift) && Mouse.MiddleButton == MouseButtonState.Pressed)
             {
-                YTrans += -((xy.Y - 425) / 2000);
+                YTrans = -((xy.Y - 425) / 200) + yTransOffset;
                 YTrans = Math.Round(YTrans, 5);
-                XTrans += ((xy.X - 810) / 2000);
+                XTrans = ((xy.X - 810) / 200) + xTransOffset;
                 XTrans = Math.Round(XTrans, 5);
                     gl.Translate(XTrans, YTrans, ZTrans - 9);
                     debug.Text = XTrans.ToString();
@@ -214,84 +215,103 @@ namespace OpenSharpGL
             }
             else
             {
+                xTransOffset = XTrans;
+                yTransOffset = YTrans;
                 gl.Translate(XTrans, YTrans , ZTrans - 9);
             }
             
 
             gl.Scale(tempScale, tempScale, tempScale);
-            
+            #region keyboardInputs
             if (Keyboard.IsKeyDown(Key.Right) & Keyboard.IsKeyDown(Key.Left) == false)
             {
-                YRot = 1;
-                rotate += 1;
-                
-                RotationSpeed = 1;
+                rotatey += 1;
             }
             if (Keyboard.IsKeyDown(Key.Left) & Keyboard.IsKeyDown(Key.Right) == false)
             {
-                YRot = 1;
-                rotate += -1;
-                RotationSpeed = 1;
-                
+                rotatey += -1;
             }
-
-            if (Keyboard.IsKeyDown(Key.Right) == false & Keyboard.IsKeyDown(Key.Left) == false)
+            if (Keyboard.IsKeyDown(Key.Up) & Keyboard.IsKeyDown(Key.Down) == false)
             {
-                
-                RotationSpeed = 0;
-                
+                rotatex += -1;
             }
+            if (Keyboard.IsKeyDown(Key.Down) & Keyboard.IsKeyDown(Key.Up) == false)
+            {
+                rotatex += 1;
+            }
+            #endregion 
+            //debug.Text = rotatex.ToString() + " " + rotatey.ToString();
+            gl.Rotate(rotatex, 1, YRot , ZRot);
+            gl.Rotate(rotatey, XRot, 1, ZRot);
             
+                
 
-
-                
-            if (XRot == 0 & YRot == 0 & ZRot == 0)
-            {
-                
-            }
-            else
-            {
-                debug.Text = rotate.ToString() + " " + YRot.ToString() + " " + ZRot.ToString();
-                gl.Rotate(rotate, XRot, YRot, ZRot);
-                
-            }
+            
             #endregion
 
             #region rendering
-            Shapes axies = new Axies(gl, 1);
-            Shapes grid = new Grid(gl, gridSize);
+
 
             
             if (primToRender == "Cube")
             {
                 Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
-             
-                cube.Draw();
-                
-                if (ScenePanel.WireframeOn == true)
-                { 
+                if (ScenePanel.XRayOn)
+                {
                     cube.DrawWire();
                 }
+                else
+                {
+                    cube.Draw();
+                    if (ScenePanel.WireframeOn == true)
+                    {
+                        cube.DrawWire();
+                    }
+                }
+
             }
             if (primToRender == "Plane")
             {
                 Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
-                plane.Draw();
-                if (ScenePanel.WireframeOn == true)
+                
+                if (ScenePanel.XRayOn)
                 {
                     plane.DrawWire();
                 }
+                else
+                {
+                    plane.Draw();
+                    if (ScenePanel.WireframeOn == true)
+                    {
+                        plane.DrawWire();
+                    }
+                }
+
             }
             if (primToRender == "Cylinder")
             {
                 Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 1);
-                cylinder.Draw();
-                
-                if (ScenePanel.WireframeOn == true)
+                if (ScenePanel.XRayOn)
                 {
                     cylinder.DrawWire();
                 }
+                else
+                {
+                    cylinder.Draw();
+                    if (ScenePanel.WireframeOn == true)
+                    {
+                        cylinder.DrawWire();
+                    }
+                }
             }
+            if (primToRender == "Sphere")
+            {
+                gl.Begin(OpenGL.GL_POINTS);
+                Shapes circle = new Circle(gl, 1, 10000);
+                gl.End();
+            }
+            Shapes axies = new Axies(gl, .5f);
+            Shapes grid = new Grid(gl, gridSize);
             #endregion
             //  Reset the modelview.
             gl.LoadIdentity();
@@ -302,28 +322,10 @@ namespace OpenSharpGL
 
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-            //OpenGL gla = args.OpenGL;
+            OpenGL gla = args.OpenGL;
         args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
-            /*
-            float[] global_ambient = new float[] { 0.5f, 0.5f, 0.5f, 1.0f };
-            float[] light0pos = new float[] { 0.0f, 5.0f, 10.0f, 1.0f };
-            float[] light0ambient = new float[] { 0.2f, 0.2f, 0.2f, 1.0f };
-            float[] light0diffuse = new float[] { 0.3f, 0.3f, 0.3f, 1.0f };
-            float[] light0specular = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
+            
 
-            float[] lmodel_ambient = new float[] { 0.2f, 0.2f, 0.2f, 1.0f };
-            gla.LightModel(OpenGL.GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-
-            gla.LightModel(OpenGL.GL_LIGHT_MODEL_AMBIENT, global_ambient);
-            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, light0pos);
-             gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, light0ambient);
-            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, light0diffuse);
-            gla.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPECULAR, light0specular);
-
-            gla.Enable(OpenGL.GL_LIGHTING);
-            gla.Enable(OpenGL.GL_LIGHT0);
-            gla.ShadeModel(OpenGL.GL_FLAT);
-            */
 
         }
 
