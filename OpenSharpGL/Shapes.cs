@@ -260,6 +260,7 @@ namespace OpenSharpGL
             gl.Vertex(points[0], points[1], points[0]);
             gl.Vertex(points[0], points[1], points[2]);
             gl.End();
+            
 
         }
     }
@@ -316,32 +317,16 @@ namespace OpenSharpGL
     {
         OpenGL gl;
         Color color;
-        float height;
-        Vertex[] verticies = new Vertex[10];
         Color wire = new Color(0.1, 0.1, 0.1);
         Color points = new Color(0.6, 0.8, 0.5);
-        public Cylinder(OpenGL opengl, Color c, float hZ)
+        float r, h, s;
+        public Cylinder(OpenGL opengl, Color c, float radius, float height, float step)
         {
             gl = opengl;
             color = c;
-            height = hZ;
-            //faces = new QFace[subDivisions];
-            //q1
-            verticies[0] = new Vertex(0, height, 1);
-            verticies[1] = new Vertex(0, -height, 1);
-
-            verticies[2] = new Vertex(0.382683f, height, 0.92388f);
-            verticies[3] = new Vertex(0.382683f, -height, 0.92388f);
-            
-            verticies[4] = new Vertex(0.707107f, height, 0.707107f);
-            verticies[5] = new Vertex(0.707107f, -height, 0.707107f);
-
-            verticies[6] = new Vertex(0.92388f, height, 0.382683f);
-            verticies[7] = new Vertex(0.92388f, -height, 0.382683f);
-
-            verticies[8] = new Vertex(1, height, 0);
-            verticies[9] = new Vertex(1, -height, 0);
-
+            r = radius;
+            h = height;
+            s = step;
 
 
 
@@ -377,139 +362,104 @@ namespace OpenSharpGL
         }
         private void cylV()
         {
-            gl.Vertex(verticies[0]);
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[3]);
-            gl.Vertex(verticies[1]);
+            Vertex[] verts;
 
-            gl.Vertex(verticies[2]);
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[5]);
-            gl.Vertex(verticies[3]);
 
-            gl.Vertex(verticies[4]);
-            gl.Vertex(verticies[6]);
-            gl.Vertex(verticies[7]);
-            gl.Vertex(verticies[5]);
 
-            gl.Vertex(0.92388, height, 0.382683);
-            gl.Vertex(1, height, 0);
-            gl.Vertex(1, -height, 0);
-            gl.Vertex(0.92388, -height, 0.382683);
-            //q2
-            gl.Vertex(1, height, 0);
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.92388, -height, -0.382683);
-            gl.Vertex(1, -height, 0);
+            float angle = 0;
+            verts = new Vertex[12];
+            s += angle;
+            for (int i = 0; i < verts.Length; i++)
+            {
+                verts[i] = new Vertex((float)Math.Cos(angle) * r, h, (float)Math.Sin(angle) * r);
 
-            gl.Vertex(0.92388, height, -0.382683);
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.707107, -height, -0.707107);
-            gl.Vertex(0.92388, -height, -0.382683);
+                gl.Vertex(verts[i]);
 
-            gl.Vertex(0.707107, height, -0.707107);
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0.382683, -height, -0.92388);
-            gl.Vertex(0.707107, -height, -0.707107);
+                verts[i] = new Vertex((float)Math.Cos(angle) * r, -h, (float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
+                angle += s;
+                verts[i] = new Vertex((float)Math.Cos(angle) * r, -h, (float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
+                verts[i] = new Vertex((float)Math.Cos(angle) * r, h, (float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
 
-            gl.Vertex(0.382683, height, -0.92388);
-            gl.Vertex(0, height, -1);
-            gl.Vertex(0, -height, -1);
-            gl.Vertex(0.382683, -height, -0.92388);
-            //q3
 
-            gl.Vertex(0, height, -1);
-            gl.Vertex(-0.382683, height, -0.92388);
-            gl.Vertex(-0.382683, -height, -0.92388);
-            gl.Vertex(0, -height, -1);
 
-            gl.Vertex(-0.382638, height, -0.92388);
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.707107, -height, -0.707107);
-            gl.Vertex(-0.382638, -height, -0.92388);
+            }
+            angle = 0;
+            //other half
+            for (int i = 0; i < verts.Length; i++)
+            {
+                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, h, -(float)Math.Sin(angle) * r);
 
-            gl.Vertex(-0.707107, height, -0.707107);
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            gl.Vertex(-0.707107, -height, -0.707107);
+                gl.Vertex(verts[i]);
 
-            gl.Vertex(-0.92388, height, -0.382683);
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-1, -height, 0);
-            gl.Vertex(-0.92388, -height, -0.382683);
-            //q4
-
-            gl.Vertex(-1, height, 0);
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.92388, -height, 0.382683);
-            gl.Vertex(-1, -height, 0);
-
-            gl.Vertex(-0.92388, height, 0.382683);
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.707107, -height, 0.707107);
-            gl.Vertex(-0.92388, -height, 0.382683);
-
-            gl.Vertex(-0.707107, height, 0.707107);
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(-0.382683, -height, 0.92388);
-            gl.Vertex(-0.707107, -height, 0.707107);
-
-            gl.Vertex(-0.382683, height, 0.92388);
-            gl.Vertex(0, height, 1);
-            gl.Vertex(0, -height, 1);
-            gl.Vertex(-0.382683, -height, 0.92388);
+                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, -h, -(float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
+                angle += s;
+                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, -h, -(float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
+                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, h, -(float)Math.Sin(angle) * r);
+                gl.Vertex(verts[i]);
         }
     }
-    class Circle : Shapes
-    {
-        public Circle(OpenGL gl, float radius, float count)
+        class Circle : Shapes
         {
-            /*
-            for (int i = 0; i < count; i++)
+            public Circle(OpenGL gl, float height, double step, float radius)
             {
-                int ia, na, ib, nb;
-                double x, y, z, r;
-                double a, b, da, db;
-                na = slices; //16                                 // number of slices
-                da = Math.PI / na - 1;                   // latitude angle step
-                for (a = -0.5 * Math.PI, ia = 0; ia < na; ia++, a += da) // slice sphere to circles in xy planes
+
+
+
+                /*
+                for (int i = 0; i < count; i++)
                 {
-                    r = Math.Cos(a);                           // radius of actual circle in xy plane
-                    z = Math.Sin(a);                           // height of actual circle in xy plane
-                    nb = (int)Math.Ceiling(2.0 * Math.PI * r / da);
-                    db = 2.0 * Math.PI / nb;             // longitude angle step
-                    if ((ia == 0) || (ia == na - 1)) { nb = 1; db = 0.0; }  // handle edge cases
-                    for (b = 0.0, ib = 0; ib < nb; ib++, b += db)   // cut circle to vertexes
+                    int ia, na, ib, nb;
+                    double x, y, z, r;
+                    double a, b, da, db;
+                    na = slices; //16                                 // number of slices
+                    da = Math.PI / na - 1;                   // latitude angle step
+                    for (a = -0.5 * Math.PI, ia = 0; ia < na; ia++, a += da) // slice sphere to circles in xy planes
                     {
-                        x = r * Math.Cos(b);                     // compute x,y of vertex
-                        y = r * Math.Sin(b);
-                        // this just draw the ray direction (x,y,z) as line in OpenGL
-                        // so you can ignore this
-                        // instead add the ray cast of yours
-                        double w = 1.2;
-                        
-                        gl.Color(1.0, 1.0, 1.0); gl.Vertex(x, y, z);
-                        //gl.Color(0.0, 0.0, 0.0); gl.Vertex(w * x, w * y, w * z);
-                        
+                        r = Math.Cos(a);                           // radius of actual circle in xy plane
+                        z = Math.Sin(a);                           // height of actual circle in xy plane
+                        nb = (int)Math.Ceiling(2.0 * Math.PI * r / da);
+                        db = 2.0 * Math.PI / nb;             // longitude angle step
+                        if ((ia == 0) || (ia == na - 1)) { nb = 1; db = 0.0; }  // handle edge cases
+                        for (b = 0.0, ib = 0; ib < nb; ib++, b += db)   // cut circle to vertexes
+                        {
+                            x = r * Math.Cos(b);                     // compute x,y of vertex
+                            y = r * Math.Sin(b);
+                            // this just draw the ray direction (x,y,z) as line in OpenGL
+                            // so you can ignore this
+                            // instead add the ray cast of yours
+                            double w = 1.2;
+
+                            gl.Color(1.0, 1.0, 1.0); gl.Vertex(x, y, z);
+                            //gl.Color(0.0, 0.0, 0.0); gl.Vertex(w * x, w * y, w * z);
+
+                        }
                     }
-                }
+                    }
+
+                int time = 5;
+                for (int i = 0; i < count; i++)
+                {
+                    var rho = time + i;
+                    var phi = 2 * Math.PI * i / count;
+                    var x = (float)(radius * Math.Sin(phi) * Math.Cos(rho));
+                    var z = (float)(radius * Math.Sin(phi) * Math.Sin(rho));
+                    var y = (float)(radius * Math.Cos(phi));
+                    gl.Color(1.0, 1.0, 1.0);
+                    gl.Vertex(x, y, z);
                 }
                 */
-            int time = 5;
-            for (int i = 0; i < count; i++)
-            {
-                var rho = time + i;
-                var phi = 2 * Math.PI * i / count;
-                var x = (float)(radius * Math.Sin(phi) * Math.Cos(rho));
-                var z = (float)(radius * Math.Sin(phi) * Math.Sin(rho));
-                var y = (float)(radius * Math.Cos(phi));
-                gl.Color(1.0, 1.0, 1.0);
-                gl.Vertex(x, y, z);
+
+
+
+
+
+
             }
-
-
-                 
-            
         }
     }
 }

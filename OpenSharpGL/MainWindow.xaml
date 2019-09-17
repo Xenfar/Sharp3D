@@ -34,7 +34,7 @@
         </Menu>
         <Separator HorizontalAlignment="Left" Height="15" Margin="0,17,0,0" VerticalAlignment="Top" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Background="#FF1B1B1B"/>
 
-        <sharpGL:OpenGLControl DrawFPS="True" MouseWheel="GlControl_MouseWheel" MouseLeftButtonUp="GLControl_MouseLeftButtonUp" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized"  Resized="OpenGLControl_Resized" FrameRate="60.0" Margin="150,24,150,0" Foreground="Black" />
+        <sharpGL:OpenGLControl DrawFPS="True" MouseWheel="GlControl_MouseWheel" MouseLeftButtonUp="GLControl_MouseLeftButtonUp" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized"  Resized="OpenGLControl_Resized" FrameRate="144.0" Margin="150,24,150,0" Foreground="Black" />
 
         <Frame Name="SettingsFrame" Margin="0,59,0,0" HorizontalAlignment="Right" Width="150" NavigationUIVisibility="Hidden" >
 

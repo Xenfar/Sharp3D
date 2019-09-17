@@ -243,11 +243,12 @@ namespace OpenSharpGL
             //debug.Text = rotatex.ToString() + " " + rotatey.ToString();
             gl.Rotate(rotatex, 1, YRot , ZRot);
             gl.Rotate(rotatey, XRot, 1, ZRot);
-            
-                
 
-            
+
+
+
             #endregion
+
 
             #region rendering
 
@@ -290,7 +291,7 @@ namespace OpenSharpGL
             }
             if (primToRender == "Cylinder")
             {
-                Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 1);
+                Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 0.5f, 1, 50);
                 if (ScenePanel.XRayOn)
                 {
                     cylinder.DrawWire();
@@ -306,8 +307,8 @@ namespace OpenSharpGL
             }
             if (primToRender == "Sphere")
             {
-                gl.Begin(OpenGL.GL_POINTS);
-                Shapes circle = new Circle(gl, 1, 10000);
+                gl.Begin(OpenGL.GL_QUADS);
+                //Shapes circle = new Circle();
                 gl.End();
             }
             Shapes axies = new Axies(gl, .5f);
