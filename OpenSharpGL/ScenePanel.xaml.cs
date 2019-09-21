@@ -21,6 +21,7 @@ namespace OpenSharpGL
     {
         public static bool WireframeOn = false;
         public static bool XRayOn = false;
+        public static double FOV = 60;
         public ScenePanel()
         {
             InitializeComponent();
@@ -65,6 +66,15 @@ namespace OpenSharpGL
                 MainWindow.gridSize = number;
 
             
+        }
+
+        private void FovInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            float number = 0;
+            if (fovInput.Text != "")
+                if (!float.TryParse(fovInput.Text, out number)) fovInput.Text = 2.5.ToString();
+
+            FOV = number;
         }
     }
 }

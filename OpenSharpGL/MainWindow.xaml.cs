@@ -6,7 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
-using System.Windows.Forms;
+
 using System.Windows;
 using System.Linq;
 
@@ -23,6 +23,7 @@ using SharpGL.SceneGraph.Lighting;
 using SharpGL.SceneGraph.Effects;
 using System.Windows.Input;
 using Point = System.Windows.Point;
+using MessageBox = System.Windows.MessageBox;
 
 namespace OpenSharpGL
 {
@@ -35,10 +36,10 @@ namespace OpenSharpGL
         float rotatex = 0;
         float rotatey = 0;
         float rotatez = 0;
-        
 
 
-        Scene a = new Scene();
+        List<Shapes> shapes = new List<Shapes>();
+        //Scene a = new Scene();
         double XScale,
             YScale,
             ZScale;
@@ -51,12 +52,12 @@ namespace OpenSharpGL
            YRot,
            ZRot;
         float RotationSpeed;
-        Vertex[] verticies = new Vertex[8];
+        //Vertex[] verticies = new Vertex[8];
         Color lightColor = new Color(0.9, 0.7, 0.3);
         #endregion
 
         string primToRender;
-        TransformationSettings ts = new TransformationSettings();
+        //TransformationSettings ts = new TransformationSettings();
         MaterialPanel mp = new MaterialPanel();
         ScenePanel sp = new ScenePanel();
         uint[] buffer = new uint[100];
@@ -69,7 +70,8 @@ namespace OpenSharpGL
         double scaleMax = 25;
         public MainWindow()
         {
-            a.OpenGL = gl;
+            
+            
             InitializeComponent();
             SettingsFrame.Content = sp;
 
@@ -88,7 +90,7 @@ namespace OpenSharpGL
 
         private void SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            SaveFile.SaveAsNew(verticies);
+            //SaveFile.SaveAsNew(verticies);
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
@@ -98,19 +100,33 @@ namespace OpenSharpGL
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Application.Current.Shutdown();
+            if (MessageBox.Show("Are you sure you want to quit?", "Confirm", MessageBoxButton.OKCancel, MessageBoxImage.Question)
+            == MessageBoxResult.OK)
+            {
+                System.Windows.Application.Current.Shutdown();
+            }
+            else
+            {
+                
+            }
+            
         }
         private void Cube_Click(object sender, RoutedEventArgs e)
         {
-            primToRender = "Cube";
+            Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
+            shapes.Add(cube);
         }
         private void Plane_Click(object sender, RoutedEventArgs e)
         {
-            primToRender = "Plane";
+            Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
+            shapes.Add(plane);
         }
         private void Cylinder_Click(object sender, RoutedEventArgs e)
         {
-            primToRender = "Cylinder";
+            
+            Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, .5, 1, 20);
+            shapes.Add(cylinder);
+            //primToRender = "Cylinder";
         }
 
         private void Sphere_Click(object sender, RoutedEventArgs e)
@@ -123,10 +139,7 @@ namespace OpenSharpGL
             System.Windows.MessageBox.Show("fucking noob");
         }
 
-        private void TransformButton_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsFrame.Content = ts;
-        }
+
 
 
 
@@ -139,6 +152,11 @@ namespace OpenSharpGL
 
 
         float scaleOffset;
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
 
         private void GlControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -164,17 +182,7 @@ namespace OpenSharpGL
             gl = args.OpenGL;
 
 
-            // Load and clear the projection matrix.
-            gl.MatrixMode(OpenGL.GL_PROJECTION);
-            gl.LoadIdentity();
 
-            // Perform a perspective transformation
-            gl.Perspective(60.0f, (float)gl.RenderContextProvider.Width /
-                (float)gl.RenderContextProvider.Height,
-                0.1f, 100.0f);
-
-            // Load the modelview.
-            gl.MatrixMode(OpenGL.GL_MODELVIEW);
             //gl.Translate(0, 0, - 9);
         }
         double xTransOffset;
@@ -182,9 +190,27 @@ namespace OpenSharpGL
 
         private void OpenGLControl_OpenGLDraw(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
-            
-            //  Get the OpenGL instance that's been passed to us.
-            gl = args.OpenGL;
+
+            // Load and clear the projection matrix.
+            gl.MatrixMode(OpenGL.GL_PROJECTION);
+            gl.LoadIdentity();
+            if (ScenePanel.FOV < 3)
+            {
+                gl.Perspective(60.0, (float)gl.RenderContextProvider.Width /
+                (float)gl.RenderContextProvider.Height,
+                0.1f, 100.0f);
+            }
+            else
+            {
+                gl.Perspective(ScenePanel.FOV, (float)gl.RenderContextProvider.Width /
+                (float)gl.RenderContextProvider.Height,
+                 0.1f, 100.0f);
+                
+            }
+
+
+            // Load the modelview.
+            gl.MatrixMode(OpenGL.GL_MODELVIEW);
             //gl.Enable(OpenGL.GL_CULL_FACE); // cull face
             //gl.CullFace(OpenGL.GL_BACK); // cull back face
             //gl.FrontFace(OpenGL.GL_CW); // GL_CCW for counter clock-wise
@@ -199,9 +225,15 @@ namespace OpenSharpGL
             #region sceneTransformations
 
             xy = Mouse.GetPosition(GLControl);
-
+            
+            gl.PointSize(5);
+            gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
+            gl.Enable(OpenGL.GL_POINT_SMOOTH);
+            //gl.LineWidth(2);
             if (Keyboard.IsKeyDown(Key.LeftShift) && Mouse.MiddleButton == MouseButtonState.Pressed)
             {
+
+                GLControl.Cursor = Cursors.ScrollAll;
                 YTrans = -((xy.Y - 425) / 200) + yTransOffset;
                 YTrans = Math.Round(YTrans, 5);
                 XTrans = ((xy.X - 810) / 200) + xTransOffset;
@@ -215,6 +247,7 @@ namespace OpenSharpGL
             }
             else
             {
+                GLControl.Cursor = Cursors.Arrow;
                 xTransOffset = XTrans;
                 yTransOffset = YTrans;
                 gl.Translate(XTrans, YTrans , ZTrans - 9);
@@ -251,67 +284,38 @@ namespace OpenSharpGL
 
 
             #region rendering
-
-
-            
-            if (primToRender == "Cube")
+            Vertex origin = new Vertex(0.0f, 0.0f, 0.0f);
+            Shapes axies = new Axies(gl, origin, .5f);
+            shapes.Add(axies);
+            foreach (Shapes shape in shapes)
             {
-                Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
+                //shape.Draw();
                 if (ScenePanel.XRayOn)
                 {
-                    cube.DrawWire();
+                    shape.DrawWire();
+                    if(shape.ToString() == "OpenSharpGL.Axies")
+                    {
+                        shape.Draw();
+                    }
+                    
                 }
                 else
                 {
-                    cube.Draw();
+                    shape.Draw();
                     if (ScenePanel.WireframeOn == true)
                     {
-                        cube.DrawWire();
+                        shape.DrawWire();
                     }
                 }
+            }
 
-            }
-            if (primToRender == "Plane")
-            {
-                Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
-                
-                if (ScenePanel.XRayOn)
-                {
-                    plane.DrawWire();
-                }
-                else
-                {
-                    plane.Draw();
-                    if (ScenePanel.WireframeOn == true)
-                    {
-                        plane.DrawWire();
-                    }
-                }
-
-            }
-            if (primToRender == "Cylinder")
-            {
-                Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, 0.5f, 1, 50);
-                if (ScenePanel.XRayOn)
-                {
-                    cylinder.DrawWire();
-                }
-                else
-                {
-                    cylinder.Draw();
-                    if (ScenePanel.WireframeOn == true)
-                    {
-                        cylinder.DrawWire();
-                    }
-                }
-            }
             if (primToRender == "Sphere")
             {
                 gl.Begin(OpenGL.GL_QUADS);
-                //Shapes circle = new Circle();
+                Shapes circle = new Circle(gl, 4, 8);
                 gl.End();
             }
-            Shapes axies = new Axies(gl, .5f);
+            
             Shapes grid = new Grid(gl, gridSize);
             #endregion
             //  Reset the modelview.

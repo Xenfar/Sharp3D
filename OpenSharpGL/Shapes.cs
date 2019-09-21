@@ -11,7 +11,8 @@ namespace OpenSharpGL
 {
     public class Shapes
     {
-
+        public static Color wire = new Color(0.1, 0.1, 0.1);
+        public static Color points = new Color(0.6, 0.8, 0.5);
         //public float[] b = new float[2];
         //public Colour a = new Colour(1, 0, .5f);
         public virtual void Draw()
@@ -44,55 +45,47 @@ namespace OpenSharpGL
     }
     class Plane : Shapes
     {
-        public Vertex[] verticies = new Vertex[4];
+        
         OpenGL gli;
         float size;
         Color color;
-        Color wire = new Color(0.1, 0.1, 0.1);
-        Color points = new Color(0.6, 0.8, 0.5);
-        public Plane(OpenGL gl, /*Vertex[] VertexManipulationArray*/ Color c, float s)
+
+        public Plane(OpenGL gl, Color c, float s)
         {
             gli = gl;
             size = s;
             color = c;
-            InitiateVerticies(out Vertex[] v);
-            verticies = v;
+            
         }
         public override void Draw()
         {
             gli.Color(color.rgb);
             gli.Begin(OpenGL.GL_QUADS);
-            QFace plane = new QFace(gli, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);
-            //gli.LoadName(1);
-            plane.Int();
+            gli.Vertex(1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, 1.0f * size);
+            gli.Vertex(1.0f * size, 0, 1.0f * size);
+
             gli.End();
         }
         public override void DrawWire()
         {
-            gli.LineWidth(2);
+            
             gli.Begin(OpenGL.GL_LINES);
             gli.Color(wire.rgb);
-            QFace plane = new QFace(gli, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);
-            //gli.LoadName(1);
-            plane.Int();
+            gli.Vertex(1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, 1.0f * size);
+            gli.Vertex(1.0f * size, 0, 1.0f * size);
             gli.End();
-            gli.PointSize(5);
             gli.Begin(OpenGL.GL_POINTS);
             gli.Color(points.rgb);
-            QFace plane2 = new QFace(gli, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);
-            //gli.LoadName(1);
-            plane2.Int();
+            gli.Vertex(1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, -1.0f * size);
+            gli.Vertex(-1.0f * size, 0, 1.0f * size);
+            gli.Vertex(1.0f * size, 0, 1.0f * size);
             gli.End();
 
-        }
-        void InitiateVerticies(out Vertex[] a)
-        {
-            
-            verticies[0] = new Vertex(1.0f, 0, -1.0f);
-            verticies[1] = new Vertex(-1.0f, 0, -1.0f);
-            verticies[2] = new Vertex(-1.0f, 0, 1.0f);
-            verticies[3] = new Vertex(1.0f, 0, 1.0f);
-            a = verticies;
         }
     }
     class Cube : Shapes
@@ -102,8 +95,7 @@ namespace OpenSharpGL
         public Vertex[] verticies = new Vertex[8];
         OpenGL gl;
         Color c;
-        Color wire = new Color(0.1, 0.1, 0.1);
-        Color points = new Color(0.6, 0.8, 0.5);
+
         public Cube(OpenGL opengl, /*Vertex[] VertexManipulationArray*/ Color color, float cubeSize)
         {
 
@@ -152,7 +144,7 @@ namespace OpenSharpGL
             //  InitiateVerticies(out Vertex[] outed);
 
             templSize = size + 0.005f;
-            gl.LineWidth(2);
+            
             gl.Begin(OpenGL.GL_LINES);
             gl.Color(wire.rgb);
 
@@ -174,9 +166,6 @@ namespace OpenSharpGL
             }
             gl.End();
 
-            gl.PointSize(5);
-            gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-            gl.Enable(OpenGL.GL_POINT_SMOOTH);
             gl.Begin(OpenGL.GL_POINTS);
             gl.Color(points.rgb);
             temppSize = size + 0.009f;
@@ -233,35 +222,41 @@ namespace OpenSharpGL
     }
     class Axies : Shapes
     {
-        public Axies(OpenGL gl, float scale)
+        OpenGL gl;
+        float[] points;
+        Vertex o;
+        public Axies(OpenGL opengl, Vertex origin, float scale)
         {
             //Axies
-
-            //gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
-            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
-            gl.Begin(OpenGL.GL_LINES);
-            gl.LineWidth(5);
-            float[] points = new float[]
+            points = new float[]
             {
                 0 * scale, 0.5f * scale, 1 * scale, 1.5f * scale
             };
+            gl = opengl;
+            o = origin;
+            //gl.Hint(OpenGL.GL_LINE_SMOOTH, OpenGL.GL_NICEST);
+            //gl.Enable(OpenGL.GL_LINE_SMOOTH);
 
-            gl.Color(1, 0.1, 0.1);
-            gl.Vertex(points[0], points[1], points[0]);
-            gl.Vertex(points[2], points[1], points[0]);
             
 
+        }
+        public override void Draw()
+        {
+            gl.Begin(OpenGL.GL_LINES);
+            gl.Color(1, 0.1, 0.1);
+            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z) ;
+            gl.Vertex(points[2] + o.X, points[1] + o.Y, points[0] + o.Z);
+
+
             gl.Color(0.1, 0.1, 1);
-            gl.Vertex(points[0], points[1], points[0]);
-            gl.Vertex(points[0], points[3], points[0]);
+            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z);
+            gl.Vertex(points[0] + o.X, points[3] + o.Y, points[0] + o.Z);
 
             gl.Color(0.1, 1, 0.1);
 
-            gl.Vertex(points[0], points[1], points[0]);
-            gl.Vertex(points[0], points[1], points[2]);
+            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z);
+            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[2] + o.Z);
             gl.End();
-            
-
         }
     }
     class Grid : Shapes
@@ -317,16 +312,15 @@ namespace OpenSharpGL
     {
         OpenGL gl;
         Color color;
-        Color wire = new Color(0.1, 0.1, 0.1);
-        Color points = new Color(0.6, 0.8, 0.5);
-        float r, h, s;
-        public Cylinder(OpenGL opengl, Color c, float radius, float height, float step)
+
+        double r, h, s;
+        public Cylinder(OpenGL opengl, Color c, double radius, double height, double sides)
         {
             gl = opengl;
             color = c;
             r = radius;
             h = height;
-            s = step;
+            s = sides;
 
 
 
@@ -336,7 +330,7 @@ namespace OpenSharpGL
         {
             gl.Begin(OpenGL.GL_QUADS);
             gl.Color(color.rgb);
-
+            
             cylV();
             
             gl.End();
@@ -345,121 +339,102 @@ namespace OpenSharpGL
         }
         public override void DrawWire()
         {
-            gl.LineWidth(2);
+            
             
             gl.Begin(OpenGL.GL_LINES);
             gl.Color(wire.rgb);
             cylV();
             gl.End();
 
-            gl.PointSize(5);
-            gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
-            gl.Enable(OpenGL.GL_POINT_SMOOTH);
             gl.Begin(OpenGL.GL_POINTS);
             gl.Color(points.rgb);
             cylV();
             gl.End();
         }
+        
         private void cylV()
         {
-            Vertex[] verts;
-
-
-
-            float angle = 0;
-            verts = new Vertex[12];
-            s += angle;
-            for (int i = 0; i < verts.Length; i++)
+            
+            for (int i = 0; i < s; i++)
             {
-                verts[i] = new Vertex((float)Math.Cos(angle) * r, h, (float)Math.Sin(angle) * r);
+                double theta = 2 * Math.PI * i / s;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
 
-                gl.Vertex(verts[i]);
+                gl.Vertex(x * (r / 2), h, y * (r / 2));
+                gl.Vertex(x * (r / 2), -h, y * (r / 2));
 
-                verts[i] = new Vertex((float)Math.Cos(angle) * r, -h, (float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
-                angle += s;
-                verts[i] = new Vertex((float)Math.Cos(angle) * r, -h, (float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
-                verts[i] = new Vertex((float)Math.Cos(angle) * r, h, (float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
-
-
-
+                int ti = i + 1;
+                double theta2 = 2 * Math.PI * ti / s;
+                double x2 = 2 * Math.Cos(theta2);
+                double y2 = 2 * Math.Sin(theta2);
+                gl.Vertex(x2 * (r / 2), -h, y2 * (r / 2));
+                gl.Vertex(x2 * (r / 2), h, y2 * (r / 2));
             }
-            angle = 0;
-            //other half
-            for (int i = 0; i < verts.Length; i++)
-            {
-                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, h, -(float)Math.Sin(angle) * r);
-
-                gl.Vertex(verts[i]);
-
-                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, -h, -(float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
-                angle += s;
-                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, -h, -(float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
-                verts[i] = new Vertex(-(float)Math.Cos(angle) * r, h, -(float)Math.Sin(angle) * r);
-                gl.Vertex(verts[i]);
         }
     }
-        class Circle : Shapes
+    class Circle : Shapes
         {
-            public Circle(OpenGL gl, float height, double step, float radius)
+            public Circle(OpenGL gl, float stacks, double sides)
             {
+            float height = 1;
+            float lastHeight = 1;
+            int n = 1;
 
+            for (float a = 1; a < stacks; a++)
+            {
+                
 
-
-                /*
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < sides; i++)
                 {
-                    int ia, na, ib, nb;
-                    double x, y, z, r;
-                    double a, b, da, db;
-                    na = slices; //16                                 // number of slices
-                    da = Math.PI / na - 1;                   // latitude angle step
-                    for (a = -0.5 * Math.PI, ia = 0; ia < na; ia++, a += da) // slice sphere to circles in xy planes
+                    double theta = 2 * Math.PI * i / sides;
+                    double x = 2 * Math.Cos(theta);
+                    double y = 2 * Math.Sin(theta);
+                    gl.Color(0.1, 1.0, 0.1);
+                    if (n == 0)
                     {
-                        r = Math.Cos(a);                           // radius of actual circle in xy plane
-                        z = Math.Sin(a);                           // height of actual circle in xy plane
-                        nb = (int)Math.Ceiling(2.0 * Math.PI * r / da);
-                        db = 2.0 * Math.PI / nb;             // longitude angle step
-                        if ((ia == 0) || (ia == na - 1)) { nb = 1; db = 0.0; }  // handle edge cases
-                        for (b = 0.0, ib = 0; ib < nb; ib++, b += db)   // cut circle to vertexes
-                        {
-                            x = r * Math.Cos(b);                     // compute x,y of vertex
-                            y = r * Math.Sin(b);
-                            // this just draw the ray direction (x,y,z) as line in OpenGL
-                            // so you can ignore this
-                            // instead add the ray cast of yours
-                            double w = 1.2;
-
-                            gl.Color(1.0, 1.0, 1.0); gl.Vertex(x, y, z);
-                            //gl.Color(0.0, 0.0, 0.0); gl.Vertex(w * x, w * y, w * z);
-
-                        }
-                    }
+                        gl.Vertex(x, height, y);
+                        gl.Vertex(x, -height, y);
                     }
 
-                int time = 5;
-                for (int i = 0; i < count; i++)
-                {
-                    var rho = time + i;
-                    var phi = 2 * Math.PI * i / count;
-                    var x = (float)(radius * Math.Sin(phi) * Math.Cos(rho));
-                    var z = (float)(radius * Math.Sin(phi) * Math.Sin(rho));
-                    var y = (float)(radius * Math.Cos(phi));
+
+
+                    int ti = i + 1;
+                    double theta2 = 2 * Math.PI * ti / sides;
+                    double x2 = 2 * Math.Cos(theta2);
+                    double y2 = 2 * Math.Sin(theta2);
                     gl.Color(1.0, 1.0, 1.0);
-                    gl.Vertex(x, y, z);
+                    if (n == 0)
+                    {
+                        gl.Vertex(x2, -height, y2);
+
+                        gl.Vertex(x2, height, y2);
+                        n = 1;
+
+                    }
+                    else
+                    {
+                        gl.Vertex(x2, -lastHeight, y2);
+
+                        gl.Vertex(x2, lastHeight, y2);
+                        n = 0;
+
+                    }
+
+
+                    lastHeight = height;
+                
+                    //gl.Vertex(x2, lastHeight, y2);
+                    //gl.Vertex(x2, lastHeight, y2);
+                    
                 }
-                */
-
-
-
-
-
-
+                
+                height++;
+                //    lastHeight = height + a;
+                //height++;
             }
+
         }
+
     }
 }
