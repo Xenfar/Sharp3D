@@ -53,6 +53,7 @@
             <Button x:Name="ColourButton" Content="C" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ColourButton_Click"/>
         </StackPanel>
         <TextBlock x:Name="debug" HorizontalAlignment="Left" Margin="5,29,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="25" Width="140"/>
+        <TreeView x:Name="SceneView" HorizontalAlignment="Left" Height="311" Grid.Row="1" VerticalAlignment="Top" Width="155" Background="#FF363636" Margin="-5,0,0,0" BorderBrush="#00828790"/>
 
 
 

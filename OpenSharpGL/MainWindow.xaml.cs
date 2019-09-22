@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+//using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
 
@@ -24,6 +24,8 @@ using SharpGL.SceneGraph.Effects;
 using System.Windows.Input;
 using Point = System.Windows.Point;
 using MessageBox = System.Windows.MessageBox;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace OpenSharpGL
 {
@@ -35,23 +37,21 @@ namespace OpenSharpGL
         #region OpenGLVariables
         float rotatex = 0;
         float rotatey = 0;
-        float rotatez = 0;
+
 
 
         List<Shapes> shapes = new List<Shapes>();
         //Scene a = new Scene();
-        double XScale,
-            YScale,
-            ZScale;
 
-        double XTrans,
-           YTrans,
-           ZTrans;
 
-        double XRot,
-           YRot,
-           ZRot;
-        float RotationSpeed;
+        double XTrans = 0,
+           YTrans = 0,
+           ZTrans = 0;
+
+        double XRot = 0,
+           YRot = 0,
+           ZRot = 0;
+       
         //Vertex[] verticies = new Vertex[8];
         Color lightColor = new Color(0.9, 0.7, 0.3);
         #endregion
@@ -71,15 +71,21 @@ namespace OpenSharpGL
         public MainWindow()
         {
             
-            
             InitializeComponent();
             SettingsFrame.Content = sp;
 
             tempScale = 2;
+            gl = GLControl.OpenGL;
+            Vertex origin = new Vertex(0.0f, 0.0f, 0.0f);
+            Shapes axies = new Axies(gl, origin, .5f);
+            CreateNode(axies, "Axies");
+
+            Shapes grid = new Grid(gl, gridSize);
+            CreateNode(grid, "Grid");
 
 
-           
-            
+
+
 
         }
         #region PanelControls
@@ -114,24 +120,27 @@ namespace OpenSharpGL
         private void Cube_Click(object sender, RoutedEventArgs e)
         {
             Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
-            shapes.Add(cube);
+            //SceneView.Items.Add("Cube");
+            CreateNode(cube, "Cube");
+            
         }
         private void Plane_Click(object sender, RoutedEventArgs e)
         {
             Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
-            shapes.Add(plane);
+            CreateNode(plane, "Plane");
         }
         private void Cylinder_Click(object sender, RoutedEventArgs e)
         {
             
             Shapes cylinder = new Cylinder(gl, MaterialPanel.SelectedColour, .5, 1, 20);
-            shapes.Add(cylinder);
+            CreateNode(cylinder, "Cylinder");
             //primToRender = "Cylinder";
         }
 
         private void Sphere_Click(object sender, RoutedEventArgs e)
         {
             primToRender = "Sphere";
+            SceneView.Items.Add("Sphere");
         }
 
         private void GLControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -141,6 +150,34 @@ namespace OpenSharpGL
 
 
 
+        void CreateNode(Shapes shape, string name)
+        {
+            
+
+            TreeViewItem item = new TreeViewItem();
+            Label t = new Label();
+            StackPanel s = new StackPanel();
+            Button b = new Button();
+            s.Orientation = Orientation.Horizontal;
+            //change to eye clipart
+            b.Content = " v ";
+
+            b.Height = 20;
+            b.Background = Brushes.DarkGray;
+            t.Content = name + " ";
+            s.Children.Add(t);
+            s.Children.Add(b);
+            item.Header = s;
+            //item.Items.Add("yeet");
+            SceneView.Items.Add(item);
+
+            shapes.Add(shape);
+            b.Click += delegate(object sender, RoutedEventArgs e)
+            {
+                shape.SetVisible(!shape.IsVisible());
+            };
+            
+        }
 
 
         private void SceneButton_Click(object sender, RoutedEventArgs e)
@@ -256,19 +293,19 @@ namespace OpenSharpGL
 
             gl.Scale(tempScale, tempScale, tempScale);
             #region keyboardInputs
-            if (Keyboard.IsKeyDown(Key.Right) & Keyboard.IsKeyDown(Key.Left) == false)
+            if (Keyboard.IsKeyDown(Key.D) & Keyboard.IsKeyDown(Key.A) == false)
             {
                 rotatey += 1;
             }
-            if (Keyboard.IsKeyDown(Key.Left) & Keyboard.IsKeyDown(Key.Right) == false)
+            if (Keyboard.IsKeyDown(Key.A) & Keyboard.IsKeyDown(Key.D) == false)
             {
                 rotatey += -1;
             }
-            if (Keyboard.IsKeyDown(Key.Up) & Keyboard.IsKeyDown(Key.Down) == false)
+            if (Keyboard.IsKeyDown(Key.W) & Keyboard.IsKeyDown(Key.S) == false)
             {
                 rotatex += -1;
             }
-            if (Keyboard.IsKeyDown(Key.Down) & Keyboard.IsKeyDown(Key.Up) == false)
+            if (Keyboard.IsKeyDown(Key.S) & Keyboard.IsKeyDown(Key.W) == false)
             {
                 rotatex += 1;
             }
@@ -284,29 +321,32 @@ namespace OpenSharpGL
 
 
             #region rendering
-            Vertex origin = new Vertex(0.0f, 0.0f, 0.0f);
-            Shapes axies = new Axies(gl, origin, .5f);
-            shapes.Add(axies);
+
+
             foreach (Shapes shape in shapes)
             {
-                //shape.Draw();
-                if (ScenePanel.XRayOn)
+                if(shape.IsVisible() == true)
                 {
-                    shape.DrawWire();
-                    if(shape.ToString() == "OpenSharpGL.Axies")
-                    {
-                        shape.Draw();
-                    }
-                    
-                }
-                else
-                {
-                    shape.Draw();
-                    if (ScenePanel.WireframeOn == true)
+                    if (ScenePanel.XRayOn)
                     {
                         shape.DrawWire();
+                        if (shape.ToString() == "OpenSharpGL.Axies" || shape.ToString() == "OpenSharpGL.Grid")
+                        {
+                            shape.Draw();
+                        }
+
+                    }
+                    else
+                    {
+                        shape.Draw();
+                        if (ScenePanel.WireframeOn == true)
+                        {
+                            shape.DrawWire();
+                        }
                     }
                 }
+                //shape.Draw();
+
             }
 
             if (primToRender == "Sphere")
@@ -316,7 +356,6 @@ namespace OpenSharpGL
                 gl.End();
             }
             
-            Shapes grid = new Grid(gl, gridSize);
             #endregion
             //  Reset the modelview.
             gl.LoadIdentity();

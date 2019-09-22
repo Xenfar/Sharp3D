@@ -13,6 +13,7 @@ namespace OpenSharpGL
     {
         public static Color wire = new Color(0.1, 0.1, 0.1);
         public static Color points = new Color(0.6, 0.8, 0.5);
+        public static bool isVisible = true;
         //public float[] b = new float[2];
         //public Colour a = new Colour(1, 0, .5f);
         public virtual void Draw()
@@ -22,6 +23,14 @@ namespace OpenSharpGL
         public virtual void DrawWire()
         {
 
+        }
+        public virtual bool IsVisible()
+        {
+            return isVisible;
+        }
+        public virtual void SetVisible(bool tf)
+        {
+            isVisible = tf;
         }
 
     }
@@ -45,7 +54,15 @@ namespace OpenSharpGL
     }
     class Plane : Shapes
     {
-        
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
         OpenGL gli;
         float size;
         Color color;
@@ -90,6 +107,15 @@ namespace OpenSharpGL
     }
     class Cube : Shapes
     {
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
         QFace[] cube = new QFace[6];
         public float size;
         public Vertex[] verticies = new Vertex[8];
@@ -222,6 +248,15 @@ namespace OpenSharpGL
     }
     class Axies : Shapes
     {
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
         OpenGL gl;
         float[] points;
         Vertex o;
@@ -261,8 +296,23 @@ namespace OpenSharpGL
     }
     class Grid : Shapes
     {
-
-        public Grid(OpenGL gl, float scale)
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
+        OpenGL gl;
+        float scale;
+        public Grid(OpenGL opengl, float s)
+        {
+            gl = opengl;
+            scale = s;
+        }
+        public override void Draw()
         {
             float scale2;
 
@@ -274,7 +324,7 @@ namespace OpenSharpGL
             gl.Vertex(scale, 0, scale);
             //fr
             gl.Vertex(-scale, 0, scale);
-            
+
             gl.Vertex(-scale, 0, scale);
             gl.Vertex(-scale, 0, -scale);
 
@@ -287,9 +337,9 @@ namespace OpenSharpGL
             for (float i = 0; i < scale; i += (scale / 10))
             {
                 scale2 = scale / i;
-                
-                gl.Vertex(scale / scale2, 0, -scale );
-                gl.Vertex(scale / scale2, 0, scale );
+
+                gl.Vertex(scale / scale2, 0, -scale);
+                gl.Vertex(scale / scale2, 0, scale);
 
                 gl.Vertex(scale / -scale2, 0, -scale);
                 gl.Vertex(scale / -scale2, 0, scale);
@@ -312,7 +362,15 @@ namespace OpenSharpGL
     {
         OpenGL gl;
         Color color;
-
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
         double r, h, s;
         public Cylinder(OpenGL opengl, Color c, double radius, double height, double sides)
         {
