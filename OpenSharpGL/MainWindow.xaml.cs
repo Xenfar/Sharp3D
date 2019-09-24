@@ -25,7 +25,13 @@ using System.Windows.Input;
 using Point = System.Windows.Point;
 using MessageBox = System.Windows.MessageBox;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Drawing;
+using System.Windows.Media.Imaging;
+using Image = System.Windows.Controls.Image;
+using Sharp3D;
+using SharpGL.Shaders;
+//using System.Windows.Media;
+//using System.Drawing;
 
 namespace OpenSharpGL
 {
@@ -68,9 +74,12 @@ namespace OpenSharpGL
         double tempScale;
         double scaleMin = 0.1;
         double scaleMax = 25;
+        string path;
+        
         public MainWindow()
         {
-            
+
+
             InitializeComponent();
             SettingsFrame.Content = sp;
 
@@ -80,12 +89,11 @@ namespace OpenSharpGL
             Shapes axies = new Axies(gl, origin, .5f);
             CreateNode(axies, "Axies");
 
-            Shapes grid = new Grid(gl, gridSize);
+            Shapes grid = new Grid(gl);
             CreateNode(grid, "Grid");
-
-
-
-
+            
+            
+            
 
         }
         #region PanelControls
@@ -150,9 +158,9 @@ namespace OpenSharpGL
 
 
 
+
         void CreateNode(Shapes shape, string name)
         {
-            
 
             TreeViewItem item = new TreeViewItem();
             Label t = new Label();
@@ -163,20 +171,77 @@ namespace OpenSharpGL
             b.Content = " v ";
 
             b.Height = 20;
-            b.Background = Brushes.DarkGray;
+            b.Width = 16;
+            b.Background = System.Windows.Media.Brushes.DarkGray;
             t.Content = name + " ";
             s.Children.Add(t);
             s.Children.Add(b);
             item.Header = s;
             //item.Items.Add("yeet");
-            SceneView.Items.Add(item);
+
 
             shapes.Add(shape);
+            if (name != "Axies" & name != "Grid")
+            {
+                CreateSubNode(item, "Arrows");
+                CreateSubNode(item, "Rings");
+            }
+            //SceneView.Items.Remove(item);
+            SceneView.Items.Add(item);
             b.Click += delegate(object sender, RoutedEventArgs e)
             {
                 shape.SetVisible(!shape.IsVisible());
             };
             
+        }
+        void CreateSubNode(TreeViewItem node, string name)
+        {
+            Vertex origin = new Vertex(0, 0, 0);
+            if (name == "Arrows")
+            {
+                Shapes arrows = new Arrows(gl, origin, 0.5f);
+                TreeViewItem item = new TreeViewItem();
+                StackPanel s = new StackPanel();
+                Label t = new Label();
+                Button b = new Button();
+                t.Content = name + " ";
+                b.Content = " v ";
+                
+                b.Width = 16;
+                b.Background = System.Windows.Media.Brushes.DarkGray;
+                s.Children.Add(t);
+                s.Children.Add(b);
+                item.Header = s;
+                node.Items.Add(item);
+                shapes.Add(arrows);
+                b.Click += delegate (object sender, RoutedEventArgs e)
+                {
+                    arrows.SetVisible(!arrows.IsVisible());
+                };
+            }
+            if (name == "Rings")
+            {
+                Shapes rings = new Rings(gl, origin, 0.5f);
+                TreeViewItem item = new TreeViewItem();
+                StackPanel s = new StackPanel();
+                Label t = new Label();
+                Button b = new Button();
+                t.Content = name + " ";
+                b.Content = " v ";
+                b.Width = 16;
+                b.Background = System.Windows.Media.Brushes.DarkGray;
+                s.Children.Add(t);
+                s.Children.Add(b);
+                item.Header = s;
+                node.Items.Add(item);
+                shapes.Add(rings);
+                rings.SetVisible(false);
+                b.Click += delegate (object sender, RoutedEventArgs e)
+                {
+                    rings.SetVisible(!rings.IsVisible());
+                };
+            }
+
         }
 
 
@@ -261,6 +326,7 @@ namespace OpenSharpGL
             //Move, Scale and Rotate Object
             #region sceneTransformations
 
+            
             xy = Mouse.GetPosition(GLControl);
             
             gl.PointSize(5);
@@ -279,7 +345,7 @@ namespace OpenSharpGL
                     debug.Text = XTrans.ToString();
 
                 
-
+                
 
             }
             else
@@ -287,7 +353,7 @@ namespace OpenSharpGL
                 GLControl.Cursor = Cursors.Arrow;
                 xTransOffset = XTrans;
                 yTransOffset = YTrans;
-                gl.Translate(XTrans, YTrans , ZTrans - 9);
+                gl.Translate(XTrans, YTrans , ZTrans - 14);
             }
             
 
@@ -322,7 +388,7 @@ namespace OpenSharpGL
 
             #region rendering
 
-
+            
             foreach (Shapes shape in shapes)
             {
                 if(shape.IsVisible() == true)
@@ -330,7 +396,7 @@ namespace OpenSharpGL
                     if (ScenePanel.XRayOn)
                     {
                         shape.DrawWire();
-                        if (shape.ToString() == "OpenSharpGL.Axies" || shape.ToString() == "OpenSharpGL.Grid")
+                        if (shape.ToString() == "OpenSharpGL.Axies" || shape.ToString() == "OpenSharpGL.Grid" || shape.ToString() == "OpenSharpGL.Arrows")
                         {
                             shape.Draw();
                         }
@@ -367,8 +433,8 @@ namespace OpenSharpGL
         private void OpenGLControl_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
         {
             OpenGL gla = args.OpenGL;
-        args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
-            
+            args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
+           // gla.DepthFunc(OpenGL.GL_LEQUAL);
 
 
         }

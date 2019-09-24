@@ -53,7 +53,11 @@
             <Button x:Name="ColourButton" Content="C" Margin="0,0,10,0" Height="20" Width="20" HorizontalAlignment="Right" VerticalAlignment="Center" Click="ColourButton_Click"/>
         </StackPanel>
         <TextBlock x:Name="debug" HorizontalAlignment="Left" Margin="5,29,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="25" Width="140"/>
-        <TreeView x:Name="SceneView" HorizontalAlignment="Left" Height="311" Grid.Row="1" VerticalAlignment="Top" Width="155" Background="#FF363636" Margin="-5,0,0,0" BorderBrush="#00828790"/>
+        <StackPanel HorizontalAlignment="Left" Height="367" Margin="-5,54,0,0" VerticalAlignment="Top" Width="155" Grid.RowSpan="2">
+            <TreeView x:Name="SceneView" HorizontalAlignment="Left" Height="288" VerticalAlignment="Top" Width="155" Background="#FF292929" BorderBrush="#00828790"/>
+            <Button x:Name="DeleteButton" Content="Delete" Margin="46,0" Background="#FF3E3E3E" BorderBrush="#FF080808"/>
+
+        </StackPanel>
 
 
 

@@ -307,13 +307,14 @@ namespace OpenSharpGL
         }
         OpenGL gl;
         float scale;
-        public Grid(OpenGL opengl, float s)
+        public Grid(OpenGL opengl)
         {
             gl = opengl;
-            scale = s;
+            
         }
         public override void Draw()
         {
+            scale = MainWindow.gridSize;
             float scale2;
 
             //Grid
@@ -362,6 +363,7 @@ namespace OpenSharpGL
     {
         OpenGL gl;
         Color color;
+        
         private new bool isVisible = true;
         public override bool IsVisible()
         {
@@ -371,6 +373,7 @@ namespace OpenSharpGL
         {
             isVisible = tf;
         }
+        
         double r, h, s;
         public Cylinder(OpenGL opengl, Color c, double radius, double height, double sides)
         {
@@ -494,5 +497,156 @@ namespace OpenSharpGL
 
         }
 
+    }
+    class Arrows : Shapes
+    {
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
+        OpenGL gl;
+        Vertex o;
+        float s;
+        public Arrows(OpenGL opengl, Vertex origin, float size)
+        {
+            gl = opengl;
+            o = origin;
+            s = size;
+        }
+        public override void Draw()
+        {
+            //base.Draw();
+            gl.Begin(OpenGL.GL_LINES);
+            gl.LineWidth(5);
+            gl.Color(1, 0.1, 0.1);
+            gl.Vertex(o.X, o.Y, o.Z);
+            gl.Vertex(o.X + (0.5 + s), o.Y, o.Z);
+            gl.Color(0.1, 0.1, 1);
+            gl.Vertex(o.X, o.Y, o.Z);
+            gl.Vertex(o.X , o.Y + (0.5 + s), o.Z);
+            gl.Color(0.1, 1, 0.1);
+            gl.Vertex(o.X, o.Y, o.Z);
+            gl.Vertex(o.X, o.Y, o.Z + (0.5 + s));
+            gl.End();
+            gl.Begin(OpenGL.GL_QUADS);
+
+
+            for (int i = 0; i < 12; i++)
+            {
+                gl.Color(1, 0.1, 0.1);
+                double theta = 2 * Math.PI * i / 12;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex(o.X + 0.5 + s, o.Y + (x * (.5f / 2) * 0.05), o.Z + (y * (.5f / 2) * 0.05));
+                gl.Vertex(o.X + (1 * 0.1) + 0.5 + s, o.Y, o.Z);
+
+                int ti = i + 1;
+                double theta2 = 2 * Math.PI * ti / 12;
+                double x2 = 2 * Math.Cos(theta2);
+                double y2 = 2 * Math.Sin(theta2);
+                gl.Vertex(o.X + (1 * 0.1) + 0.5 + s, o.Y, o.Z);
+                gl.Vertex(o.X + 0.5 + s, o.Y + (x2 * (.5f / 2) * 0.05),o.Z + ( y2 *(.5f / 2) * 0.05));
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                gl.Color(0.1, 0.1, 1);
+                double theta = 2 * Math.PI * i / 12;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex(o.X + (x * (.5f / 2) * 0.05) , o.Y + 0.5 + s, o.Z + (y * (.5f / 2) * 0.05));
+                gl.Vertex(o.X , o.Y + (1 * 0.1) + 0.5 + s, o.Z);
+
+                int ti = i + 1;
+                double theta2 = 2 * Math.PI * ti / 12;
+                double x2 = 2 * Math.Cos(theta2);
+                double y2 = 2 * Math.Sin(theta2);
+                gl.Vertex(o.X, o.Y + (1 * 0.1) + 0.5 + s, o.Z);
+                gl.Vertex(o.X + (x2 * (.5f / 2) * 0.05), o.Y + 0.5 + s, o.Z + (y2 * (.5f / 2) * 0.05));
+            }
+
+            //aaaa
+
+            for (int i = 0; i < 12; i++)
+            {
+                gl.Color(0.1, 1, 0);
+                double theta = 2 * Math.PI * i / 12;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex(o.X + (x * (.5f / 2) * 0.05), o.Y + (y * (.5f / 2) * 0.05) , o.Z + 0.5 + s);
+                gl.Vertex(o.X, o.Y, o.Z + (1 * 0.1) + 0.5 + s);
+
+                int ti = i + 1;
+                double theta2 = 2 * Math.PI * ti / 12;
+                double x2 = 2 * Math.Cos(theta2);
+                double y2 = 2 * Math.Sin(theta2);
+                gl.Vertex(o.X, o.Y , o.Z + (1 * 0.1) + 0.5 + s);
+                gl.Vertex(o.X + (x2 * (.5f / 2) * 0.05), o.Y + (y2 * (.5f / 2) * 0.05), o.Z + 0.5 + s);
+            }
+            gl.End();
+        }
+    }
+    class Rings : Shapes
+    {
+        OpenGL gl;
+        Vertex o;
+        float scale;
+        public Rings(OpenGL opengl, Vertex origin, float size)
+        {
+            gl = opengl;
+            o = origin;
+            scale = size;
+        }
+        public override void Draw()
+        {
+            gl.Begin(OpenGL.GL_LINE_LOOP);
+            for (int i = 0; i < 48; i++)
+            {
+                gl.Color(1.0, 0.1, 0.1);
+                double theta = 2 * Math.PI * i / 48;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex((x * (2 / 2)) * scale, 0, (y * (2 / 2)) * scale);
+
+                
+            }
+            gl.End();
+            gl.Begin(OpenGL.GL_LINE_LOOP);
+            for (int i = 0; i < 48; i++)
+            {
+                gl.Color(0.1, 0.1, 1);
+                double theta = 2 * Math.PI * i / 48;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex(0, ( x * (2 / 2)) * scale, (y * (2 / 2)) * scale);
+
+
+            }
+            gl.End();
+
+            gl.Begin(OpenGL.GL_LINE_LOOP);
+            for (int i = 0; i < 48; i++)
+            {
+                gl.Color(0.1, 1, 0.1);
+                double theta = 2 * Math.PI * i / 48;
+                double x = 2 * Math.Cos(theta);
+                double y = 2 * Math.Sin(theta);
+
+                gl.Vertex((x * (2 / 2)) * scale, (y * (2 / 2)) * scale, 0);
+
+
+            }
+            gl.End();
+        }
     }
 }
