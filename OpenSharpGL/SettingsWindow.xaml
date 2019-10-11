@@ -1,0 +1,26 @@
+﻿<Window x:Class="Sharp3D.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sharp3D"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="SettingsWindow" Height="450" Width="800" Background="#FF3E3E3E">
+    <Grid>
+        <Label Content="Settings" HorizontalAlignment="Center" Margin="348,10,342,0" VerticalAlignment="Top" Height="39" FontSize="24" FontWeight="Bold" FontFamily="Global User Interface" Width="102"/>
+
+        <Button Content="Save and Close" HorizontalAlignment="Center" Margin="348,0,351,10" VerticalAlignment="Bottom" Width="93" Click="SaveAndClose_Click"/>
+        <Button Content="Save" HorizontalAlignment="Center" Margin="250,0,449,10" VerticalAlignment="Bottom" Width="93" Click="Save_Click"/>
+        <Button Content="Close" HorizontalAlignment="Center" Margin="446,0,253,10" VerticalAlignment="Bottom" Width="93" RenderTransformOrigin="0.673,0.596" Click="Close_Click"/>
+
+        <Separator HorizontalAlignment="Left" Height="64" Margin="0,17,0,0" VerticalAlignment="Top" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Background="Black"/>
+
+        <Label Content="FOV" HorizontalAlignment="Center" Margin="10,39,736,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="46"/>
+        <TextBox x:Name="fieldOfViewInput" TextChanged="FieldOfViewInput_TextChanged" HorizontalAlignment="Center" Height="23" Margin="20,68,751,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="21" Background="#FF6A6A6A" BorderBrush="#FF3C3C3C"/>
+
+        <Label Content="Background Colour" HorizontalAlignment="Center" Margin="61,39,577,0" VerticalAlignment="Top" Height="29" FontSize="16" FontWeight="Bold" FontFamily="Global User Interface" Width="154"/>
+        <xctk:ColorPicker x:Name="backgroundInput" HorizontalAlignment="Left" Margin="73,68,0,0" VerticalAlignment="Top" Width="130" SelectedColorChanged="BackgroundInput_SelectedColorChanged" DisplayColorAndName="True" />
+
+    </Grid>
+</Window>

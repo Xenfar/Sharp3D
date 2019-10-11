@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SharpGL;
-namespace OpenSharpGL
+using System.Windows.Media;
+namespace Sharp3D
 {
     public class Color
     {
 
         public double[] rgb = new double[3];
-        public double R { get; }
-        public double G { get; }
-        public double B { get; }
+        public double R { get; set; }
+        public double G { get; set; }
+        public double B { get; set; }
         // public static float a { get; set; }
 
         public Color(double red, double green, double blue)
@@ -23,6 +24,15 @@ namespace OpenSharpGL
             G = rgb[1];
             B = rgb[2];
          
+        }
+        public System.Windows.Media.Color ToMediaColor()
+        {
+            System.Windows.Media.Color n = new System.Windows.Media.Color();
+            n.R = (byte)(R * 255);
+            n.G = (byte)(G * 255);
+            n.B = (byte)(B * 255);
+            n.A = 255;
+            return n;
         }
 
 

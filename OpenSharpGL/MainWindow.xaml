@@ -1,9 +1,9 @@
-﻿<Window x:Class="OpenSharpGL.MainWindow"
+﻿<Window x:Class="Sharp3D.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        
+        Closed="Window_Closed"
         xmlns:local="clr-namespace:OpenSharpGL"
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         mc:Ignorable="d"
@@ -34,12 +34,18 @@
                     <MenuItem Header="_Sphere" Click="Sphere_Click"/>
 
                 </MenuItem>
+                <MenuItem Header="_Lighting">
+                    <MenuItem Header="_Point Light"/>
+                    <MenuItem Header="_Spot Light"/>
+                    <MenuItem Header="_Ambient Light"/>
+                    <MenuItem Header="_Directional Light"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <Separator HorizontalAlignment="Left" Height="15" Margin="0,17,0,0" VerticalAlignment="Top" Width="{Binding ElementName=grid_Main,Path=ActualWidth}" Background="#FF1B1B1B"/>
 
-        <sharpGL:OpenGLControl DrawFPS="True" MouseWheel="GlControl_MouseWheel" MouseLeftButtonUp="GLControl_MouseLeftButtonUp" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized"  Resized="OpenGLControl_Resized" FrameRate="144.0" Margin="150,24,150,0" Foreground="Black" Cursor="Arrow" Grid.RowSpan="2" />
-
+        <sharpGL:OpenGLControl DrawFPS="True" MouseWheel="GlControl_MouseWheel" MouseLeftButtonDown="GLControl_MouseLeftButtonDown" Name="GLControl" OpenGLDraw="OpenGLControl_OpenGLDraw" OpenGLInitialized="OpenGLControl_OpenGLInitialized"  Resized="OpenGLControl_Resized" FrameRate="144.0" Margin="150,24,150,0" Foreground="Black" Cursor="Arrow" Grid.RowSpan="2" />
+        
         <Frame Name="SettingsFrame" Margin="0,59,0,0" HorizontalAlignment="Right" Width="150" NavigationUIVisibility="Hidden" Cursor="Arrow" Grid.RowSpan="2" >
 
         </Frame>

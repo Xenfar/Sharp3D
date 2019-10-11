@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenSharpGL
+namespace Sharp3D
 {
     class QFace
     {
@@ -30,5 +30,43 @@ namespace OpenSharpGL
             }
 
         }
+    }
+
+    public class Vec3
+    {
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public float[] xyz = new float[3];
+        public Vec3(float xcoord, float ycoord, float zcoord)
+        {
+            x = xcoord;
+            y = ycoord;
+            z = zcoord;
+            xyz[0] = x;
+            xyz[1] = y;
+            xyz[2] = z;
+        }
+    }
+
+    public class Vec4
+    {
+        public float x { get; set; }
+        public float y { get; set; }
+        public float z { get; set; }
+        public float w { get; set; }
+        public float[] xyzw = new float[4];
+        public Vec4(float xcoord, float ycoord, float zcoord, float wcoord)
+        {
+            x = xcoord;
+            y = ycoord;
+            z = zcoord;
+            w = wcoord;
+            xyzw[0] = x;
+            xyzw[1] = y;
+            xyzw[2] = z;
+            xyzw[3] = w;
+        }
+
     }
 }

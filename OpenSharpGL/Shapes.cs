@@ -7,7 +7,7 @@ using System.Windows.Media;
 using SharpGL;
 using SharpGL.SceneGraph;
 
-namespace OpenSharpGL
+namespace Sharp3D
 {
     public class Shapes
     {
@@ -32,6 +32,22 @@ namespace OpenSharpGL
         {
             isVisible = tf;
         }
+        public void Setmaterial(float r, float g, float b, OpenGL gl)
+        {
+            //here you set materials, you must declare each one of the colors global or locally like this:
+            float[] MatAmbient = { 0.1f, 0.1f, 0.1f, 1.0f };
+            float[] MatDiffuse = { r, g, b, 1.0f };
+            float[] MatSpecular = { 1f, 0.1f, 1f, 1f };
+            float MatShininess = 60;
+            float[] black = { 0.0f, 0.0f, 0.0f, 1.0f };
+            gl.Material(OpenGL.GL_FRONT_AND_BACK, OpenGL.GL_AMBIENT, MatAmbient);
+            gl.Material(OpenGL.GL_FRONT_AND_BACK, OpenGL.GL_DIFFUSE, MatDiffuse);
+            gl.Material(OpenGL.GL_FRONT_AND_BACK, OpenGL.GL_SPECULAR, MatSpecular);
+            gl.Material(OpenGL.GL_FRONT_AND_BACK, OpenGL.GL_SHININESS, MatShininess);
+            gl.Material(OpenGL.GL_FRONT_AND_BACK, OpenGL.GL_EMISSION, black);
+
+        }
+
 
     }
     class Imported : Shapes
@@ -63,46 +79,48 @@ namespace OpenSharpGL
         {
             isVisible = tf;
         }
-        OpenGL gli;
+        OpenGL gl;
         float size;
         Color color;
-
-        public Plane(OpenGL gl, Color c, float s)
+        Vec3 o;
+        public Plane(OpenGL opengl, Color c, float s, Vec3 origin)
         {
-            gli = gl;
+            gl = opengl;
             size = s;
             color = c;
-            
+            o = origin;
         }
         public override void Draw()
         {
-            gli.Color(color.rgb);
-            gli.Begin(OpenGL.GL_QUADS);
-            gli.Vertex(1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, 1.0f * size);
-            gli.Vertex(1.0f * size, 0, 1.0f * size);
-
-            gli.End();
+            //gli.Color(color.rgb);
+            Setmaterial((float)color.R, (float)color.B, (float)color.G, gl);
+            gl.Begin(OpenGL.GL_QUADS);
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (1.0f * size));
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (1.0f * size));
+            
+            gl.End();
         }
         public override void DrawWire()
         {
-            
-            gli.Begin(OpenGL.GL_LINES);
-            gli.Color(wire.rgb);
-            gli.Vertex(1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, 1.0f * size);
-            gli.Vertex(1.0f * size, 0, 1.0f * size);
-            gli.End();
-            gli.Begin(OpenGL.GL_POINTS);
-            gli.Color(points.rgb);
-            gli.Vertex(1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, -1.0f * size);
-            gli.Vertex(-1.0f * size, 0, 1.0f * size);
-            gli.Vertex(1.0f * size, 0, 1.0f * size);
-            gli.End();
+            gl.Disable(OpenGL.GL_LIGHTING);
 
+            gl.Begin(OpenGL.GL_LINES);
+            gl.Color(wire.rgb);
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (1.0f * size));
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (1.0f * size));
+            gl.End();
+            gl.Begin(OpenGL.GL_POINTS);
+            gl.Color(points.rgb);
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (-1.0f * size));
+            gl.Vertex(o.x + (-1.0f * size), o.y + (0), o.z + (1.0f * size));
+            gl.Vertex(o.x + (1.0f * size), o.y + (0), o.z + (1.0f * size));
+            gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
     }
     class Cube : Shapes
@@ -136,14 +154,18 @@ namespace OpenSharpGL
 
 
         }
+
+
         public override void Draw()
         {
 
             //QFace[] cube = new QFace[6];
             //use first one for primitive plane
             gl.Begin(OpenGL.GL_QUADS);
-            gl.Color(c.rgb);
+            //gl.Color(c.rgb);
+            Setmaterial((float)c.R, (float)c.B, (float)c.G, gl);
             cube[0] = new QFace(gl, verticies[0] * size, verticies[1] * size, verticies[2] * size, verticies[3] * size);//top 
+
 
             cube[1] = new QFace(gl, verticies[4] * size, verticies[5] * size, verticies[6] * size, verticies[7] * size);//bottom
 
@@ -170,8 +192,8 @@ namespace OpenSharpGL
             //  InitiateVerticies(out Vertex[] outed);
 
             templSize = size + 0.005f;
-            
-            gl.Begin(OpenGL.GL_LINES);
+            gl.Disable(OpenGL.GL_LIGHTING);
+            gl.Begin(OpenGL.GL_LINE_LOOP);
             gl.Color(wire.rgb);
 
             cube[0] = new QFace(gl, verticies[0] * templSize, verticies[1] * templSize, verticies[2] * templSize, verticies[3] * templSize);//top 
@@ -212,7 +234,7 @@ namespace OpenSharpGL
                 cube[i].Int();
             }
             gl.End();
-            
+            gl.Enable(OpenGL.GL_LIGHTING);
             //base.DrawWire();
         }
         public void InitiateVerticies(out Vertex[] a)
@@ -277,21 +299,25 @@ namespace OpenSharpGL
         }
         public override void Draw()
         {
+            gl.Disable(OpenGL.GL_LIGHTING);
             gl.Begin(OpenGL.GL_LINES);
+            //Setmaterial(1, 0.1f, 0.1f, gl);
             gl.Color(1, 0.1, 0.1);
-            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z) ;
+            gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z);
             gl.Vertex(points[2] + o.X, points[1] + o.Y, points[0] + o.Z);
 
-
+            //Setmaterial(0.1f,0.1f, 1f, gl);
             gl.Color(0.1, 0.1, 1);
             gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z);
             gl.Vertex(points[0] + o.X, points[3] + o.Y, points[0] + o.Z);
 
+            //Setmaterial(0.1f, 1f, 0.1f, gl);
             gl.Color(0.1, 1, 0.1);
 
             gl.Vertex(points[0] + o.X, points[1] + o.Y, points[0] + o.Z);
             gl.Vertex(points[0] + o.X, points[1] + o.Y, points[2] + o.Z);
             gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
     }
     class Grid : Shapes
@@ -318,6 +344,7 @@ namespace OpenSharpGL
             float scale2;
 
             //Grid
+            gl.Disable(OpenGL.GL_LIGHTING);
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
             gl.Color(0.15, 0.15, 0.15);
@@ -357,6 +384,7 @@ namespace OpenSharpGL
             }
             //continue
             gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
     }
     class Cylinder : Shapes
@@ -390,7 +418,8 @@ namespace OpenSharpGL
         public override void Draw()
         {
             gl.Begin(OpenGL.GL_QUADS);
-            gl.Color(color.rgb);
+            //gl.Color(color.rgb);
+            Setmaterial((float)color.R, (float)color.G, (float)color.B, gl);
             
             cylV();
             
@@ -400,9 +429,9 @@ namespace OpenSharpGL
         }
         public override void DrawWire()
         {
-            
-            
-            gl.Begin(OpenGL.GL_LINES);
+
+            gl.Disable(OpenGL.GL_LIGHTING);
+            gl.Begin(OpenGL.GL_LINE_LOOP);
             gl.Color(wire.rgb);
             cylV();
             gl.End();
@@ -411,6 +440,7 @@ namespace OpenSharpGL
             gl.Color(points.rgb);
             cylV();
             gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
         
         private void cylV()
@@ -521,6 +551,7 @@ namespace OpenSharpGL
         public override void Draw()
         {
             //base.Draw();
+            gl.Disable(OpenGL.GL_LIGHTING);
             gl.Begin(OpenGL.GL_LINES);
             gl.LineWidth(5);
             gl.Color(1, 0.1, 0.1);
@@ -592,10 +623,20 @@ namespace OpenSharpGL
                 gl.Vertex(o.X + (x2 * (.5f / 2) * 0.05), o.Y + (y2 * (.5f / 2) * 0.05), o.Z + 0.5 + s);
             }
             gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
     }
     class Rings : Shapes
     {
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
         OpenGL gl;
         Vertex o;
         float scale;
@@ -607,6 +648,7 @@ namespace OpenSharpGL
         }
         public override void Draw()
         {
+            gl.Disable(OpenGL.GL_LIGHTING);
             gl.Begin(OpenGL.GL_LINE_LOOP);
             for (int i = 0; i < 48; i++)
             {
@@ -647,6 +689,72 @@ namespace OpenSharpGL
 
             }
             gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
         }
     }
+    class Light
+    {
+
+        public float r { get; set; }
+        public float g { get; set; }
+        public float b { get; set; }
+        public float a { get; set; }
+        public float Specularity { get; set; }
+        public float intensity { get; set; }
+        public Vec4 lightDirection { get; set; }
+        OpenGL gl;
+        Vec3 o;
+        public Light(OpenGL opengl)
+        {
+            
+            gl = opengl;
+
+        }
+        public void Init()
+        {
+            float[] LightAmbient = { 0.1f, 0.1f, 0.1f, 1.0f };
+            float[] LightEmission = { 1.0f, 0.1f, 0.1f, 1.0f };
+            float[] LightDiffuse = { r, g, b, a };
+            float[] LightSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
+            //float[] LightDirection = { 0, -0.5f, 0f };
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, LightAmbient);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, LightDiffuse);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPECULAR, LightSpecular);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightDirection.xyzw);
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.ShadeModel(OpenGL.GL_FLAT);
+            gl.Enable(OpenGL.GL_LIGHT0);
+            
+        }
+
+    }
+    class LightPoint : Shapes
+    {
+        private new bool isVisible = true;
+        public override bool IsVisible()
+        {
+            return isVisible;
+        }
+        public override void SetVisible(bool tf)
+        {
+            isVisible = tf;
+        }
+        OpenGL gl;
+        Vec3 pos;
+        public LightPoint(OpenGL opengl, Vec3 position)
+        {
+            gl = opengl;
+            pos = position;
+        }
+        public override void Draw()
+        {
+            gl.Disable(OpenGL.GL_LIGHTING);
+            gl.Begin(OpenGL.GL_POINTS);
+            gl.Color(0.5, 0.5, 0);
+            gl.Vertex(pos.xyz);
+            gl.End();
+            gl.Enable(OpenGL.GL_LIGHTING);
+        }
+    }
+
 }

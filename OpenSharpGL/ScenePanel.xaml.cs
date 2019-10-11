@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace OpenSharpGL
+namespace Sharp3D
 {
     /// <summary>
     /// Interaction logic for ScenePanel.xaml

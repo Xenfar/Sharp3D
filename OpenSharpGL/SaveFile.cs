@@ -7,7 +7,7 @@ using SharpGL.SceneGraph;
 using System.Windows.Forms;
 using System.IO;
 
-namespace OpenSharpGL
+namespace Sharp3D
 {
     public static class SaveFile
     {

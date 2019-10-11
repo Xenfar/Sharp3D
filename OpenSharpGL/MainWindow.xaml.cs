@@ -28,12 +28,17 @@ using System.Windows.Controls;
 using System.Drawing;
 using System.Windows.Media.Imaging;
 using Image = System.Windows.Controls.Image;
-using Sharp3D;
+
 using SharpGL.Shaders;
+using Sharp3D;
+using Newtonsoft.Json;
+using System.IO;
+using Color = Sharp3D.Color;
+using Light = Sharp3D.Light;
 //using System.Windows.Media;
 //using System.Drawing;
 
-namespace OpenSharpGL
+namespace Sharp3D
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -47,6 +52,7 @@ namespace OpenSharpGL
 
 
         List<Shapes> shapes = new List<Shapes>();
+        List<Light> lights = new List<Light>();
         //Scene a = new Scene();
 
 
@@ -75,7 +81,8 @@ namespace OpenSharpGL
         double scaleMin = 0.1;
         double scaleMax = 25;
         string path;
-        
+        uint[] selectBuffer;
+        Settings settings;
         public MainWindow()
         {
 
@@ -86,17 +93,63 @@ namespace OpenSharpGL
             tempScale = 2;
             gl = GLControl.OpenGL;
             Vertex origin = new Vertex(0.0f, 0.0f, 0.0f);
-            Shapes axies = new Axies(gl, origin, .5f);
+            Shapes axies = new Sharp3D.Axies(gl, origin, .5f);
             CreateNode(axies, "Axies");
 
-            Shapes grid = new Grid(gl);
+            Shapes grid = new Sharp3D.Grid(gl);
             CreateNode(grid, "Grid");
+
             
-            
-            
+            settings = new Settings();
+            settings.DefaultValues();
+            SettingsSetup();
 
         }
         #region PanelControls
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            string path2 = @"C:\Users\Xander Kakris\source\repos\Sharp3D\OpenSharpGL\settings.json";
+            string result = JsonConvert.SerializeObject(settings);
+            File.WriteAllText(path2, "");
+            using (var tw = new StreamWriter(path2, true))
+            {
+                tw.Flush();
+                tw.WriteLine(result.ToString());
+                tw.Close();
+            }
+        }
+        void SettingsSetup()
+        {
+            
+            string result = JsonConvert.SerializeObject(settings);
+            string path2 = @"C:\Users\Xander Kakris\source\repos\Sharp3D\OpenSharpGL\settings.json";
+
+            
+            if (File.Exists(path2))
+            {
+                using (var sr = new StreamReader(path2))
+                {
+
+                    settings = JsonConvert.DeserializeObject<Settings>(sr.ReadLine());
+                    
+                    MessageBox.Show(settings.backgroundColor.R.ToString());
+                    sr.Close();
+                }
+
+            }
+            else if (!File.Exists(path2))
+            {
+                File.Create(path2);
+                using (var tw = new StreamWriter(path2, true))
+                {
+
+                    tw.WriteLine(result.ToString());
+                    tw.Close();
+                }
+            }
+            
+        }
+        
         private void ColourButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsFrame.Content = mp;
@@ -125,16 +178,24 @@ namespace OpenSharpGL
             }
             
         }
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow sw = new SettingsWindow();
+            sw.Initialize(settings);
+            sw.ShowDialog();
+            
+        }
         private void Cube_Click(object sender, RoutedEventArgs e)
         {
-            Shapes cube = new Cube(gl, MaterialPanel.SelectedColour, 0.5f);
+            Shapes cube = new Sharp3D.Cube(gl, MaterialPanel.SelectedColour, 0.5f);
             //SceneView.Items.Add("Cube");
             CreateNode(cube, "Cube");
             
         }
         private void Plane_Click(object sender, RoutedEventArgs e)
         {
-            Shapes plane = new Plane(gl, MaterialPanel.SelectedColour, 0.5f);
+            Vec3 origin = new Vec3(0, 0, 0);
+               Shapes plane = new Sharp3D.Plane(gl, MaterialPanel.SelectedColour, 0.5f, origin);
             CreateNode(plane, "Plane");
         }
         private void Cylinder_Click(object sender, RoutedEventArgs e)
@@ -150,10 +211,12 @@ namespace OpenSharpGL
             primToRender = "Sphere";
             SceneView.Items.Add("Sphere");
         }
-
-        private void GLControl_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void GLControl_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            System.Windows.MessageBox.Show("fucking noob");
+            //System.Windows.MessageBox.Show("fucking noob");
+            Point coords = Mouse.GetPosition(GLControl);
+
+            //SelectObjects(coords);
         }
 
 
@@ -181,7 +244,7 @@ namespace OpenSharpGL
 
 
             shapes.Add(shape);
-            if (name != "Axies" & name != "Grid")
+            if (name != "Axies" & name != "Grid" & !name.Contains("Light"))
             {
                 CreateSubNode(item, "Arrows");
                 CreateSubNode(item, "Rings");
@@ -249,44 +312,63 @@ namespace OpenSharpGL
         {
             SettingsFrame.Content = sp;
         }
+        float scaleOffset;
+
+
+
+        private void GlControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+
+            //tempZTrans = ZTrans - 9;
+
+            if (e.Delta < 0 & tempScale > scaleMin)
+            {
+                //scaleOffset += 0.01f;
+                tempScale -= 0.45;
+            }
+            if (e.Delta > 0 & tempScale < scaleMax)
+            {
+                //scaleOffset -= 0.01f;
+                tempScale += 0.45;
+                //debug.Text = tempScale.ToString();
+            }
+            debug.Text = tempScale.ToString();
+        }
         #endregion
 
 
 
-        float scaleOffset;
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
+        public void AddLight(Color c)
         {
-            
-        }
+            Light l = new Light(gl);
+            l.r = (float)c.R;
+            l.g = (float)c.G;
+            l.b = (float)c.B;
+            l.a = 1f;
 
-        private void GlControl_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            
-            //tempZTrans = ZTrans - 9;
-            
-            if (e.Delta < 0 & tempScale > scaleMin)
-            {
-                scaleOffset += 0.01f;
-                tempScale -= 0.3 + scaleOffset;
-            }
-            if (e.Delta > 0 & tempScale < scaleMax)
-            {
-                scaleOffset -= 0.01f;
-                tempScale += 0.3 - scaleOffset;
-                //debug.Text = tempScale.ToString();
-            }
-            debug.Text = tempScale.ToString();
+            //Last value determines if the light is positional = 1, or directional = 0
+            l.lightDirection = new Vec4(1f, 1f, 1, 1);
+
+            l.Specularity = 1f;
+            l.Init();
+            Vec3 origin = new Vec3(l.lightDirection.x, l.lightDirection.y, l.lightDirection.z);
+            Shapes light = new LightPoint(gl, origin);
+            CreateNode(light, "Light0");
         }
         private void OpenGLControl_Resized(object sender, OpenGLEventArgs args)
         {
             // Get the OpenGL instance.
             gl = args.OpenGL;
+            //Setlight();
+            Color white = new Color(1, 0, 0);
+            AddLight(white);
+            
 
-
-
-            //gl.Translate(0, 0, - 9);
         }
+
+
+
         double xTransOffset;
         double yTransOffset;
 
@@ -296,7 +378,7 @@ namespace OpenSharpGL
             // Load and clear the projection matrix.
             gl.MatrixMode(OpenGL.GL_PROJECTION);
             gl.LoadIdentity();
-            if (ScenePanel.FOV < 3)
+            if (settings.fieldOfView < 3)
             {
                 gl.Perspective(60.0, (float)gl.RenderContextProvider.Width /
                 (float)gl.RenderContextProvider.Height,
@@ -304,34 +386,45 @@ namespace OpenSharpGL
             }
             else
             {
-                gl.Perspective(ScenePanel.FOV, (float)gl.RenderContextProvider.Width /
+                gl.Perspective(settings.fieldOfView, (float)gl.RenderContextProvider.Width /
                 (float)gl.RenderContextProvider.Height,
                  0.1f, 100.0f);
                 
             }
 
-
+            
             // Load the modelview.
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
+
             //gl.Enable(OpenGL.GL_CULL_FACE); // cull face
             //gl.CullFace(OpenGL.GL_BACK); // cull back face
             //gl.FrontFace(OpenGL.GL_CW); // GL_CCW for counter clock-wise
             //  Clear the color and depth buffers.
             gl.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
             //Set window background color
-            gl.ClearColor(0.1f, 0.1f, 0.1f, 1f);
+            if (settings.backgroundColor == null)
+            {
+                gl.ClearColor(0.2f, 0.2f, 0.2f, 1);
+            }
+            else
+            {
+                gl.ClearColor((float)settings.backgroundColor.R, (float)settings.backgroundColor.G, (float)settings.backgroundColor.B, 1f);
+            }
+            
             //  Reset the modelview matrix.
-            gl.LoadIdentity();
+            
+            //gl.LoadIdentity();
 
             //Move, Scale and Rotate Object
             #region sceneTransformations
 
-            
+
             xy = Mouse.GetPosition(GLControl);
-            
+
             gl.PointSize(5);
             gl.Hint(OpenGL.GL_POINT_SMOOTH_HINT, OpenGL.GL_NICEST);
             gl.Enable(OpenGL.GL_POINT_SMOOTH);
+
             //gl.LineWidth(2);
             if (Keyboard.IsKeyDown(Key.LeftShift) && Mouse.MiddleButton == MouseButtonState.Pressed)
             {
@@ -341,7 +434,7 @@ namespace OpenSharpGL
                 YTrans = Math.Round(YTrans, 5);
                 XTrans = ((xy.X - 810) / 200) + xTransOffset;
                 XTrans = Math.Round(XTrans, 5);
-                    gl.Translate(XTrans, YTrans, ZTrans - 9);
+                    gl.Translate(XTrans, YTrans, tempScale - 14);
                     debug.Text = XTrans.ToString();
 
                 
@@ -353,11 +446,11 @@ namespace OpenSharpGL
                 GLControl.Cursor = Cursors.Arrow;
                 xTransOffset = XTrans;
                 yTransOffset = YTrans;
-                gl.Translate(XTrans, YTrans , ZTrans - 14);
+                gl.Translate(XTrans, YTrans , tempScale - 14);
             }
             
 
-            gl.Scale(tempScale, tempScale, tempScale);
+            //gl.Scale(tempScale, tempScale, tempScale);
             #region keyboardInputs
             if (Keyboard.IsKeyDown(Key.D) & Keyboard.IsKeyDown(Key.A) == false)
             {
@@ -388,7 +481,7 @@ namespace OpenSharpGL
 
             #region rendering
 
-            
+
             foreach (Shapes shape in shapes)
             {
                 if(shape.IsVisible() == true)
@@ -396,7 +489,7 @@ namespace OpenSharpGL
                     if (ScenePanel.XRayOn)
                     {
                         shape.DrawWire();
-                        if (shape.ToString() == "OpenSharpGL.Axies" || shape.ToString() == "OpenSharpGL.Grid" || shape.ToString() == "OpenSharpGL.Arrows")
+                        if (shape.ToString() == "OpenSharpGL.Axies" || shape.ToString() == "OpenSharpGL.Grid" || shape.ToString() == "OpenSharpGL.Arrows" || shape.ToString() == "OpenSharpGL.Rings" || shape.ToString() == "OpenSharpGL.LightPoint")
                         {
                             shape.Draw();
                         }
@@ -425,6 +518,7 @@ namespace OpenSharpGL
             #endregion
             //  Reset the modelview.
             gl.LoadIdentity();
+            
             //  Flush OpenGL.
             gl.Flush();
         
@@ -434,8 +528,8 @@ namespace OpenSharpGL
         {
             OpenGL gla = args.OpenGL;
             args.OpenGL.Enable(OpenGL.GL_DEPTH_TEST);
-           // gla.DepthFunc(OpenGL.GL_LEQUAL);
-
+            // gla.DepthFunc(OpenGL.GL_LEQUAL);
+            gla.ShadeModel(OpenGL.GL_FLAT);
 
         }
 
